@@ -1,5 +1,5 @@
-import { lazy, Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { AppShell } from './components/layout/AppShell';
 import { ThemeProvider, DEFAULT_THEME } from './contexts/ThemeContext';
 import { HomePage } from './pages/HomePage';
@@ -44,9 +44,25 @@ function DefaultLayout() {
   );
 }
 
+function VariantKeyboardNav() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      const num = parseInt(e.key);
+      if (num >= 1 && num <= 5) navigate(`/v${num}`);
+      else if (e.key === 'Escape' || e.key === '0') navigate('/');
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [navigate]);
+  return null;
+}
+
 function App() {
   return (
     <Suspense fallback={<LoadingFallback />}>
+      <VariantKeyboardNav />
       <Routes>
         {/* Variant picker landing */}
         <Route path="/" element={<VariantPicker />} />
