@@ -1,4 +1,4 @@
-import { useState, useCallback, type ReactNode } from 'react';
+import { useState, useCallback, useMemo, type ReactNode } from 'react';
 import {
   Plus,
   Trash2,
@@ -64,9 +64,18 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
   const [newHypName, setNewHypName] = useState('');
   const [newHypDesc, setNewHypDesc] = useState('');
 
-  const scores = calculateAllScores(matrix);
-  const normalizedScores = getNormalizedScores(matrix);
-  const preferredId = findPreferredHypothesis(matrix);
+  const scores = useMemo(
+    () => calculateAllScores(matrix),
+    [matrix.ratings, matrix.evidence, matrix.hypotheses]
+  );
+  const normalizedScores = useMemo(
+    () => getNormalizedScores(matrix),
+    [matrix.ratings, matrix.evidence, matrix.hypotheses]
+  );
+  const preferredId = useMemo(
+    () => findPreferredHypothesis(matrix),
+    [matrix.ratings, matrix.evidence, matrix.hypotheses]
+  );
 
   const handleCycleRating = useCallback(
     (evidenceId: string, hypothesisId: string) => {
@@ -122,7 +131,7 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
     setEditValue('');
   };
 
-  const credBadgeClass = (level: string) => {
+  const credBadgeClass = (level: 'High' | 'Medium' | 'Low') => {
     switch (level) {
       case 'High':
         return 'badge-high';
@@ -219,9 +228,18 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
                         />
                       ) : (
                         <span
-                          className="text-xs font-semibold text-slate-200 cursor-pointer hover:text-accent-400 transition-colors"
+                          className="text-xs font-semibold text-slate-200 cursor-pointer hover:text-accent-400 transition-colors focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:outline-none rounded"
                           onClick={() => startEditing('hypothesis', h.id, 'name', h.name)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              startEditing('hypothesis', h.id, 'name', h.name);
+                            }
+                          }}
+                          role="button"
+                          tabIndex={0}
                           title="Click to edit"
+                          aria-label={`Edit hypothesis: ${h.name}`}
                         >
                           {h.name}
                         </span>
@@ -274,11 +292,20 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
                         />
                       ) : (
                         <p
-                          className="text-xs text-slate-300 leading-relaxed cursor-pointer hover:text-slate-100 transition-colors"
+                          className="text-xs text-slate-300 leading-relaxed cursor-pointer hover:text-slate-100 transition-colors focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:outline-none rounded"
                           onClick={() =>
                             startEditing('evidence', e.id, 'description', e.description)
                           }
+                          onKeyDown={(ev) => {
+                            if (ev.key === 'Enter' || ev.key === ' ') {
+                              ev.preventDefault();
+                              startEditing('evidence', e.id, 'description', e.description);
+                            }
+                          }}
+                          role="button"
+                          tabIndex={0}
                           title="Click to edit"
+                          aria-label={`Edit evidence: ${e.description.substring(0, 60)}`}
                         >
                           {e.description}
                         </p>
@@ -306,14 +333,24 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
                 {matrix.hypotheses.map((h) => {
                   const rating = matrix.ratings[e.id]?.[h.id];
                   const displayRating = rating ?? 'NA';
+                  const ratingLabel = getRatingLabel(displayRating);
                   return (
                     <td
                       key={`${e.id}-${h.id}`}
-                      className={`p-2 text-center border-r border-slate-700/50 cursor-pointer select-none transition-all duration-100 ${
+                      className={`p-2 text-center border-r border-slate-700/50 cursor-pointer select-none transition-all duration-100 focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:outline-none ${
                         h.id === preferredId ? 'bg-intel-green/5' : ''
                       }`}
                       onClick={() => handleCycleRating(e.id, h.id)}
-                      title={`${getRatingLabel(displayRating)} — Click to cycle`}
+                      onKeyDown={(ev) => {
+                        if (ev.key === 'Enter' || ev.key === ' ') {
+                          ev.preventDefault();
+                          handleCycleRating(e.id, h.id);
+                        }
+                      }}
+                      role="button"
+                      tabIndex={0}
+                      aria-label={`Rate evidence "${e.description.substring(0, 40)}" against hypothesis "${h.name}", currently ${ratingLabel}`}
+                      title={`${ratingLabel} — Click to cycle`}
                     >
                       <span
                         className={`inline-flex items-center justify-center w-8 h-8 rounded-lg border text-xs font-mono font-bold transition-all ${RATING_STYLES[displayRating]}`}

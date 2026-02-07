@@ -45,6 +45,10 @@ export function ExportPage() {
     return store.exportProject(project.id) ?? '{}';
   };
 
+  /** Escape a value for use inside a markdown table cell. */
+  const escapeCell = (value: string): string =>
+    value.replace(/\|/g, '\\|').replace(/\r?\n/g, ' ').trim();
+
   const generateMarkdown = (): string => {
     const lines: string[] = [];
     lines.push(`# ${project.name}`);
@@ -58,14 +62,14 @@ export function ExportPage() {
     lines.push('');
 
     for (const matrix of project.achMatrices) {
-      lines.push(`## ACH Matrix: ${matrix.name}`);
+      lines.push(`## ACH Matrix: ${escapeCell(matrix.name)}`);
       lines.push('');
 
       const scores = calculateAllScores(matrix);
       const preferredId = findPreferredHypothesis(matrix);
 
       // Table header
-      const hNames = matrix.hypotheses.map((h) => h.name);
+      const hNames = matrix.hypotheses.map((h) => escapeCell(h.name));
       lines.push(`| Evidence | Source | Cred. | ${hNames.join(' | ')} |`);
       lines.push(`| --- | --- | --- | ${hNames.map(() => '---').join(' | ')} |`);
 
@@ -75,8 +79,10 @@ export function ExportPage() {
           const r = matrix.ratings[e.id]?.[h.id] ?? 'NA';
           return r;
         });
-        const desc = e.description.replace(/\|/g, '\\|').substring(0, 80);
-        lines.push(`| ${desc} | ${e.source} | ${e.credibility} | ${ratings.join(' | ')} |`);
+        const desc = escapeCell(e.description).substring(0, 80);
+        const source = escapeCell(e.source);
+        const cred = escapeCell(e.credibility);
+        lines.push(`| ${desc} | ${source} | ${cred} | ${ratings.join(' | ')} |`);
       }
       lines.push('');
 
@@ -86,19 +92,19 @@ export function ExportPage() {
       for (const h of matrix.hypotheses) {
         const score = scores[h.id] ?? 0;
         const marker = h.id === preferredId ? ' ⭐ **PREFERRED**' : '';
-        lines.push(`- **${h.name}:** ${score}${marker}`);
+        lines.push(`- **${escapeCell(h.name)}:** ${score}${marker}`);
       }
       lines.push('');
 
       // Legend
       lines.push('*Legend: C = Consistent, I = Inconsistent, N = Neutral, NA = Not Applicable*');
-      lines.push('*Scoring: I = +2, N = 0, C = -1 (weighted by evidence credibility: H=3, M=2, L=1)*');
+      lines.push('*Scoring: I = +2, N = 0, C = -1 (weighted by credibility × relevance)*');
       lines.push('');
     }
 
     // Bias checklists
     for (const checklist of project.biasChecklists) {
-      lines.push(`## Bias Checklist: ${checklist.name}`);
+      lines.push(`## Bias Checklist: ${escapeCell(checklist.name)}`);
       lines.push('');
       const checked = checklist.biases.filter((b) => b.checked).length;
       lines.push(`**Progress:** ${checked}/${checklist.biases.length} reviewed`);
@@ -107,8 +113,10 @@ export function ExportPage() {
       lines.push('| --- | --- | --- | --- |');
       for (const bias of checklist.biases) {
         const status = bias.checked ? '✅' : '⬜';
-        const notes = bias.mitigationNotes.replace(/\|/g, '\\|').substring(0, 100);
-        lines.push(`| ${bias.name} | ${bias.category} | ${status} | ${notes} |`);
+        const name = escapeCell(bias.name);
+        const category = escapeCell(bias.category);
+        const notes = escapeCell(bias.mitigationNotes).substring(0, 100);
+        lines.push(`| ${name} | ${category} | ${status} | ${notes} |`);
       }
       lines.push('');
     }
@@ -120,11 +128,19 @@ export function ExportPage() {
     return exportFormat === 'json' ? generateJSON() : generateMarkdown();
   };
 
+  const [copyError, setCopyError] = useState('');
+
   const handleCopy = async () => {
     const content = getExportContent();
-    await navigator.clipboard.writeText(content);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setCopyError('');
+    try {
+      await navigator.clipboard.writeText(content);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopyError('Failed to copy — try selecting the text above and copying manually.');
+      setTimeout(() => setCopyError(''), 5000);
+    }
   };
 
   const handleDownload = () => {
@@ -220,6 +236,12 @@ export function ExportPage() {
             <Download size={14} className="inline mr-1" /> Download File
           </button>
         </div>
+        {copyError && (
+          <div className="flex items-center gap-2 text-xs text-red-400">
+            <AlertTriangle size={14} />
+            {copyError}
+          </div>
+        )}
       </div>
 
       {/* Import */}

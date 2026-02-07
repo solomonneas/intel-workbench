@@ -13,8 +13,22 @@ const CREDIBILITY_WEIGHTS: Record<string, number> = {
   Low: 1,
 };
 
+const RELEVANCE_WEIGHTS: Record<string, number> = {
+  High: 1.5,
+  Medium: 1.0,
+  Low: 0.5,
+};
+
 /**
  * Calculate the weighted inconsistency score for a hypothesis.
+ *
+ * Scoring model:
+ *   score += ratingWeight * credibilityWeight * relevanceWeight
+ *
+ * - ratingWeight: C = -1 (supports), I = +2 (contradicts), N = 0, NA = 0
+ * - credibilityWeight: High = 3, Medium = 2, Low = 1
+ * - relevanceWeight: High = 1.5, Medium = 1.0, Low = 0.5
+ *
  * Lower score = more supported hypothesis (less inconsistency).
  * Positive score = hypothesis is contradicted by evidence.
  * Negative score = hypothesis is strongly supported.
@@ -31,8 +45,9 @@ export function calculateInconsistencyScore(
 
     const ratingWeight = RATING_WEIGHTS[rating];
     const credWeight = CREDIBILITY_WEIGHTS[evidence.credibility] ?? 1;
+    const relWeight = RELEVANCE_WEIGHTS[evidence.relevance] ?? 1.0;
 
-    score += ratingWeight * credWeight;
+    score += ratingWeight * credWeight * relWeight;
   }
 
   return score;

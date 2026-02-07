@@ -48,6 +48,162 @@ interface ProjectStore {
   importProject: (json: string) => boolean;
 }
 
+/**
+ * Validate and normalize an imported project, ensuring all fields have proper types
+ * and data integrity is maintained (orphaned ratings removed, missing entries filled).
+ * Returns a normalized Project or null if fundamentally invalid.
+ */
+function normalizeImportedProject(raw: unknown): Project | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const obj = raw as Record<string, unknown>;
+
+  // Require id and name as non-empty strings
+  if (typeof obj.id !== 'string' || !obj.id.trim()) return null;
+  if (typeof obj.name !== 'string' || !obj.name.trim()) return null;
+
+  const now = new Date().toISOString();
+
+  // Normalize timestamps
+  const createdAt = typeof obj.createdAt === 'string' ? obj.createdAt : now;
+  const updatedAt = typeof obj.updatedAt === 'string' ? obj.updatedAt : now;
+  const description = typeof obj.description === 'string' ? obj.description : '';
+
+  // Normalize achMatrices
+  const rawMatrices = Array.isArray(obj.achMatrices) ? obj.achMatrices : [];
+  const achMatrices: ACHMatrix[] = [];
+  for (const rm of rawMatrices) {
+    const m = normalizeMatrix(rm, now);
+    if (m) achMatrices.push(m);
+  }
+
+  // Normalize biasChecklists
+  const rawChecklists = Array.isArray(obj.biasChecklists) ? obj.biasChecklists : [];
+  const biasChecklists: BiasChecklist[] = [];
+  for (const rc of rawChecklists) {
+    const c = normalizeChecklist(rc, now);
+    if (c) biasChecklists.push(c);
+  }
+
+  return {
+    id: obj.id as string,
+    name: obj.name as string,
+    description,
+    achMatrices,
+    biasChecklists,
+    createdAt,
+    updatedAt,
+  };
+}
+
+function normalizeMatrix(raw: unknown, fallbackTime: string): ACHMatrix | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const obj = raw as Record<string, unknown>;
+
+  if (typeof obj.id !== 'string' || !obj.id.trim()) return null;
+  if (typeof obj.name !== 'string' || !obj.name.trim()) return null;
+
+  const createdAt = typeof obj.createdAt === 'string' ? obj.createdAt : fallbackTime;
+  const updatedAt = typeof obj.updatedAt === 'string' ? obj.updatedAt : fallbackTime;
+
+  // Normalize hypotheses
+  const rawHyps = Array.isArray(obj.hypotheses) ? obj.hypotheses : [];
+  const hypotheses: Hypothesis[] = [];
+  for (const rh of rawHyps) {
+    if (rh && typeof rh === 'object' && typeof (rh as Record<string, unknown>).id === 'string' && typeof (rh as Record<string, unknown>).name === 'string') {
+      hypotheses.push({
+        id: (rh as Hypothesis).id,
+        name: (rh as Hypothesis).name,
+        description: typeof (rh as Hypothesis).description === 'string' ? (rh as Hypothesis).description : '',
+      });
+    }
+  }
+
+  // Normalize evidence
+  const rawEvs = Array.isArray(obj.evidence) ? obj.evidence : [];
+  const validCredRel = new Set(['High', 'Medium', 'Low']);
+  const evidence: Evidence[] = [];
+  for (const re of rawEvs) {
+    if (re && typeof re === 'object' && typeof (re as Record<string, unknown>).id === 'string') {
+      const e = re as Record<string, unknown>;
+      evidence.push({
+        id: e.id as string,
+        description: typeof e.description === 'string' ? e.description : '',
+        source: typeof e.source === 'string' ? e.source : '',
+        credibility: validCredRel.has(e.credibility as string) ? (e.credibility as Evidence['credibility']) : 'Medium',
+        relevance: validCredRel.has(e.relevance as string) ? (e.relevance as Evidence['relevance']) : 'Medium',
+      });
+    }
+  }
+
+  // Build valid ID sets
+  const hypothesisIds = new Set(hypotheses.map((h) => h.id));
+  const evidenceIds = new Set(evidence.map((e) => e.id));
+  const validRatings = new Set(['C', 'I', 'N', 'NA']);
+
+  // Rebuild ratings: only keep keys matching existing evidence/hypothesis IDs,
+  // and ensure every evidence row has a ratings entry
+  const rawRatings = obj.ratings && typeof obj.ratings === 'object' ? (obj.ratings as Record<string, unknown>) : {};
+  const ratings: Record<string, Record<string, ConsistencyRating>> = {};
+
+  for (const eId of evidenceIds) {
+    const rawEvidenceRatings = rawRatings[eId];
+    const cleaned: Record<string, ConsistencyRating> = {};
+    if (rawEvidenceRatings && typeof rawEvidenceRatings === 'object') {
+      for (const [hId, val] of Object.entries(rawEvidenceRatings as Record<string, unknown>)) {
+        if (hypothesisIds.has(hId) && validRatings.has(val as string)) {
+          cleaned[hId] = val as ConsistencyRating;
+        }
+      }
+    }
+    ratings[eId] = cleaned;
+  }
+
+  return {
+    id: obj.id as string,
+    name: obj.name as string,
+    hypotheses,
+    evidence,
+    ratings,
+    createdAt,
+    updatedAt,
+  };
+}
+
+function normalizeChecklist(raw: unknown, fallbackTime: string): BiasChecklist | null {
+  if (!raw || typeof raw !== 'object') return null;
+  const obj = raw as Record<string, unknown>;
+
+  if (typeof obj.id !== 'string' || !obj.id.trim()) return null;
+  if (typeof obj.name !== 'string' || !obj.name.trim()) return null;
+
+  const createdAt = typeof obj.createdAt === 'string' ? obj.createdAt : fallbackTime;
+  const updatedAt = typeof obj.updatedAt === 'string' ? obj.updatedAt : fallbackTime;
+
+  const rawBiases = Array.isArray(obj.biases) ? obj.biases : [];
+  const biases: BiasChecklist['biases'] = [];
+  for (const rb of rawBiases) {
+    if (rb && typeof rb === 'object' && typeof (rb as Record<string, unknown>).id === 'string') {
+      const b = rb as Record<string, unknown>;
+      biases.push({
+        id: b.id as string,
+        name: typeof b.name === 'string' ? b.name : '',
+        description: typeof b.description === 'string' ? b.description : '',
+        category: typeof b.category === 'string' ? b.category : '',
+        checked: typeof b.checked === 'boolean' ? b.checked : false,
+        mitigationNotes: typeof b.mitigationNotes === 'string' ? b.mitigationNotes : '',
+      });
+    }
+  }
+
+  return {
+    id: obj.id as string,
+    name: obj.name as string,
+    biases,
+    createdAt,
+    updatedAt,
+  };
+}
+
 function updateProjectTimestamp(project: Project): Project {
   return { ...project, updatedAt: new Date().toISOString() };
 }
@@ -404,8 +560,9 @@ export const useProjectStore = create<ProjectStore>()(
 
       importProject: (json) => {
         try {
-          const project = JSON.parse(json) as Project;
-          if (!project.id || !project.name) return false;
+          const raw = JSON.parse(json);
+          const project = normalizeImportedProject(raw);
+          if (!project) return false;
           set((state) => {
             // Replace if exists, otherwise add
             const exists = state.projects.some((p) => p.id === project.id);
