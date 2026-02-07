@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { AppShell } from './components/layout/AppShell';
 import { ThemeProvider, DEFAULT_THEME } from './contexts/ThemeContext';
 import { HomePage } from './pages/HomePage';
@@ -9,6 +9,8 @@ import { ExportPage } from './pages/ExportPage';
 import { DocsPage } from './pages/DocsPage';
 import { VariantPicker } from './pages/VariantPicker';
 import KeyboardHints from './components/KeyboardHints';
+import VariantSettings from './components/VariantSettings';
+import { useDefaultVariant } from './hooks/useDefaultVariant';
 
 // Lazy-load variant layouts for code splitting
 const V1Layout = lazy(() => import('./variants/v1/Layout'));
@@ -16,6 +18,15 @@ const V2Layout = lazy(() => import('./variants/v2/Layout'));
 const V3Layout = lazy(() => import('./variants/v3/Layout'));
 const V4Layout = lazy(() => import('./variants/v4/Layout'));
 const V5Layout = lazy(() => import('./variants/v5/Layout'));
+
+const APP_ID = 'intel-workbench';
+const VARIANT_NAMES = [
+  'Dark Ops',
+  'Blueprint',
+  'Field Notes',
+  'Cyber Terminal',
+  'Cyber Noir',
+];
 
 function LoadingFallback() {
   return (
@@ -60,11 +71,37 @@ function VariantKeyboardNav() {
   return null;
 }
 
+function DefaultVariantRedirect() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { defaultVariant } = useDefaultVariant(APP_ID);
+
+  useEffect(() => {
+    if (location.pathname === '/' && defaultVariant) {
+      navigate(`/v${defaultVariant}`, { replace: true });
+    }
+  }, [location.pathname, defaultVariant, navigate]);
+
+  return null;
+}
+
 function App() {
+  const location = useLocation();
+  const { defaultVariant, setDefaultVariant } = useDefaultVariant(APP_ID);
+  const variantMatch = location.pathname.match(/^\/v([1-5])/);
+  const currentVariant = variantMatch ? parseInt(variantMatch[1], 10) : null;
+
   return (
     <Suspense fallback={<LoadingFallback />}>
       <VariantKeyboardNav />
+      <DefaultVariantRedirect />
       <KeyboardHints />
+      <VariantSettings
+        currentVariant={currentVariant}
+        defaultVariant={defaultVariant}
+        onSetDefault={setDefaultVariant}
+        variantNames={VARIANT_NAMES}
+      />
       <Routes>
         {/* Variant picker landing */}
         <Route path="/" element={<VariantPicker />} />
