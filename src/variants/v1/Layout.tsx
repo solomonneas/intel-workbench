@@ -7,6 +7,7 @@ import {
   Shield,
   ChevronRight,
   ArrowLeft,
+  BookOpen,
 } from 'lucide-react';
 import { ThemeProvider, type ThemeColors } from '../../contexts/ThemeContext';
 import { useProjectStore } from '../../store/useProjectStore';
@@ -14,6 +15,8 @@ import { HomePage } from '../../pages/HomePage';
 import { ACHPage } from '../../pages/ACHPage';
 import { BiasPage } from '../../pages/BiasPage';
 import { ExportPage } from '../../pages/ExportPage';
+import { DocsPage } from '../../pages/DocsPage';
+import { GuidedTour, TakeTourButton } from '../../components/GuidedTour';
 
 const THEME: ThemeColors = {
   bg: '#0a1628',
@@ -30,8 +33,9 @@ const THEME: ThemeColors = {
 const navItems = [
   { to: '', icon: Home, label: 'Projects' },
   { to: 'ach', icon: Grid3X3, label: 'ACH Matrix' },
-  { to: 'bias', icon: Brain, label: 'Bias Checklist' },
-  { to: 'export', icon: Download, label: 'Export' },
+  { to: 'bias', icon: Brain, label: 'Bias Checklist', tourId: 'bias-nav' },
+  { to: 'export', icon: Download, label: 'Export', tourId: 'export-nav' },
+  { to: 'docs', icon: BookOpen, label: 'Docs', tourId: 'docs-nav' },
 ];
 
 export default function LangleyLayout() {
@@ -49,6 +53,9 @@ export default function LangleyLayout() {
           fontFamily: THEME.fontBody,
         }}
       >
+        {/* Guided tour */}
+        <GuidedTour />
+
         {/* TOP SECRET Banner */}
         <style>{`
           .langley-stamp {
@@ -132,6 +139,7 @@ export default function LangleyLayout() {
                     borderLeft: isActive ? `2px solid ${THEME.accent}` : '2px solid transparent',
                     fontFamily: THEME.fontHeading,
                   }}
+                  {...(item.tourId ? { 'data-tour': item.tourId } : {})}
                 >
                   <Icon size={18} />
                   <span>{item.label}</span>
@@ -141,7 +149,7 @@ export default function LangleyLayout() {
           </nav>
 
           {/* Footer */}
-          <div className="px-4 py-3" style={{ borderTop: `1px solid ${THEME.border}` }}>
+          <div className="px-4 py-3" style={{ borderTop: `1px solid ${THEME.border}` }} data-tour="variant-picker">
             <button
               onClick={() => navigate('/')}
               className="flex items-center gap-2 text-xs transition-colors hover:opacity-80"
@@ -185,15 +193,18 @@ export default function LangleyLayout() {
                 </>
               )}
             </div>
-            <div
-              className="text-[10px] tracking-[2px] uppercase px-3 py-1 rounded"
-              style={{
-                backgroundColor: 'rgba(201,168,76,0.1)',
-                color: THEME.accent,
-                border: `1px solid ${THEME.border}`,
-              }}
-            >
-              DOCUMENT CLASSIFICATION: TOP SECRET
+            <div className="flex items-center gap-3">
+              <TakeTourButton />
+              <div
+                className="text-[10px] tracking-[2px] uppercase px-3 py-1 rounded"
+                style={{
+                  backgroundColor: 'rgba(201,168,76,0.1)',
+                  color: THEME.accent,
+                  border: `1px solid ${THEME.border}`,
+                }}
+              >
+                DOCUMENT CLASSIFICATION: TOP SECRET
+              </div>
             </div>
           </header>
 
@@ -205,6 +216,7 @@ export default function LangleyLayout() {
               <Route path="ach/:matrixId" element={<ACHPage />} />
               <Route path="bias" element={<BiasPage />} />
               <Route path="export" element={<ExportPage />} />
+              <Route path="docs" element={<DocsPage />} />
             </Routes>
           </main>
         </div>

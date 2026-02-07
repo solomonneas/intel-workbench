@@ -200,12 +200,13 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
                 Rel.
               </th>
               {/* Hypothesis columns */}
-              {matrix.hypotheses.map((h) => (
+              {matrix.hypotheses.map((h, hIdx) => (
                 <th
                   key={h.id}
                   className={`p-3 text-center border-b border-r border-slate-700/50 min-w-[140px] ${
                     h.id === preferredId ? 'bg-intel-green/5' : ''
                   }`}
+                  {...(hIdx === 0 ? { 'data-tour': 'hypothesis-columns' } : {})}
                 >
                   <div className="flex flex-col items-center gap-1">
                     <div className="flex items-center gap-1">
@@ -269,7 +270,10 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
                 } hover:bg-surface-700/30 transition-colors`}
               >
                 {/* Evidence description */}
-                <td className="sticky left-0 z-10 p-3 border-r border-slate-700/50 bg-inherit">
+                <td
+                  className="sticky left-0 z-10 p-3 border-r border-slate-700/50 bg-inherit"
+                  {...(idx === 0 ? { 'data-tour': 'evidence-rows' } : {})}
+                >
                   <div className="flex items-start gap-2">
                     <div className="flex-1 min-w-0">
                       {editingCell?.type === 'evidence' &&
@@ -330,7 +334,7 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
                   <span className={credBadgeClass(e.relevance)}>{e.relevance[0]}</span>
                 </td>
                 {/* Rating cells */}
-                {matrix.hypotheses.map((h) => {
+                {matrix.hypotheses.map((h, hIdx) => {
                   const rating = matrix.ratings[e.id]?.[h.id];
                   const displayRating = rating ?? 'NA';
                   const ratingLabel = getRatingLabel(displayRating);
@@ -340,6 +344,7 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
                       className={`p-2 text-center border-r border-slate-700/50 cursor-pointer select-none transition-all duration-100 focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:outline-none ${
                         h.id === preferredId ? 'bg-intel-green/5' : ''
                       }`}
+                      {...(idx === 0 && hIdx === 0 ? { 'data-tour': 'scoring-cells' } : {})}
                       onClick={() => handleCycleRating(e.id, h.id)}
                       onKeyDown={(ev) => {
                         if (ev.key === 'Enter' || ev.key === ' ') {
@@ -365,7 +370,7 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
           </tbody>
           {/* Score bar footer */}
           {matrix.hypotheses.length > 0 && (
-            <tfoot>
+            <tfoot data-tour="score-bar">
               <tr className="bg-surface-800 border-t border-slate-700/50">
                 <td className="sticky left-0 z-10 bg-surface-800 p-3 border-r border-slate-700/50">
                   <span className="text-xs font-mono font-semibold text-slate-400 uppercase">

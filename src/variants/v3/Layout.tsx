@@ -1,11 +1,13 @@
 import { Routes, Route, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Grid3X3, Brain, Download, Shield, ArrowLeft } from 'lucide-react';
+import { Home, Grid3X3, Brain, Download, Shield, ArrowLeft, BookOpen } from 'lucide-react';
 import { ThemeProvider, type ThemeColors } from '../../contexts/ThemeContext';
 import { useProjectStore } from '../../store/useProjectStore';
 import { HomePage } from '../../pages/HomePage';
 import { ACHPage } from '../../pages/ACHPage';
 import { BiasPage } from '../../pages/BiasPage';
 import { ExportPage } from '../../pages/ExportPage';
+import { DocsPage } from '../../pages/DocsPage';
+import { GuidedTour, TakeTourButton } from '../../components/GuidedTour';
 
 const THEME: ThemeColors = {
   bg: '#fafaf9',
@@ -22,8 +24,9 @@ const THEME: ThemeColors = {
 const navItems = [
   { to: '', icon: Home, label: 'Projects' },
   { to: 'ach', icon: Grid3X3, label: 'ACH Matrix' },
-  { to: 'bias', icon: Brain, label: 'Bias Checklist' },
-  { to: 'export', icon: Download, label: 'Export' },
+  { to: 'bias', icon: Brain, label: 'Bias Checklist', tourId: 'bias-nav' },
+  { to: 'export', icon: Download, label: 'Export', tourId: 'export-nav' },
+  { to: 'docs', icon: BookOpen, label: 'Docs', tourId: 'docs-nav' },
 ];
 
 export default function AnalystDeskLayout() {
@@ -79,6 +82,9 @@ export default function AnalystDeskLayout() {
           fontFamily: THEME.fontBody,
         }}
       >
+        {/* Guided tour */}
+        <GuidedTour />
+
         {/* Top navigation bar */}
         <header
           className="flex items-center px-6 h-14 flex-shrink-0"
@@ -114,6 +120,7 @@ export default function AnalystDeskLayout() {
                     color: isActive ? THEME.accent : THEME.textMuted,
                     borderBottom: isActive ? `2px solid ${THEME.accent}` : '2px solid transparent',
                   }}
+                  {...(item.tourId ? { 'data-tour': item.tourId } : {})}
                 >
                   <Icon size={16} />
                   <span>{item.label}</span>
@@ -124,6 +131,7 @@ export default function AnalystDeskLayout() {
 
           {/* Right side */}
           <div className="ml-auto flex items-center gap-4">
+            <TakeTourButton />
             {activeProject && (
               <span className="text-xs" style={{ color: THEME.textMuted }}>
                 {activeProject.name}
@@ -133,6 +141,7 @@ export default function AnalystDeskLayout() {
               onClick={() => navigate('/')}
               className="flex items-center gap-1 text-xs transition-colors"
               style={{ color: THEME.textMuted }}
+              data-tour="variant-picker"
             >
               <ArrowLeft size={14} />
               <span>Themes</span>
@@ -149,6 +158,7 @@ export default function AnalystDeskLayout() {
               <Route path="ach/:matrixId" element={<ACHPage />} />
               <Route path="bias" element={<BiasPage />} />
               <Route path="export" element={<ExportPage />} />
+              <Route path="docs" element={<DocsPage />} />
             </Routes>
           </div>
         </main>

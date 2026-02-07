@@ -7,6 +7,7 @@ import {
   Zap,
   ArrowLeft,
   ChevronRight,
+  BookOpen,
 } from 'lucide-react';
 import { ThemeProvider, type ThemeColors } from '../../contexts/ThemeContext';
 import { useProjectStore } from '../../store/useProjectStore';
@@ -14,6 +15,8 @@ import { HomePage } from '../../pages/HomePage';
 import { ACHPage } from '../../pages/ACHPage';
 import { BiasPage } from '../../pages/BiasPage';
 import { ExportPage } from '../../pages/ExportPage';
+import { DocsPage } from '../../pages/DocsPage';
+import { GuidedTour, TakeTourButton } from '../../components/GuidedTour';
 
 const THEME: ThemeColors = {
   bg: '#0d0d0d',
@@ -31,8 +34,9 @@ const THEME: ThemeColors = {
 const navItems = [
   { to: '', icon: Home, label: 'NEXUS' },
   { to: 'ach', icon: Grid3X3, label: 'ACH//GRID' },
-  { to: 'bias', icon: Brain, label: 'BIAS//SCAN' },
-  { to: 'export', icon: Download, label: 'EXTRACT' },
+  { to: 'bias', icon: Brain, label: 'BIAS//SCAN', tourId: 'bias-nav' },
+  { to: 'export', icon: Download, label: 'EXTRACT', tourId: 'export-nav' },
+  { to: 'docs', icon: BookOpen, label: 'CODEX', tourId: 'docs-nav' },
 ];
 
 export default function CyberNoirLayout() {
@@ -50,6 +54,9 @@ export default function CyberNoirLayout() {
           fontFamily: THEME.fontBody,
         }}
       >
+        {/* Guided tour */}
+        <GuidedTour />
+
         <style>{`
           @keyframes glow-pulse {
             0%, 100% { opacity: 0.6; }
@@ -143,6 +150,7 @@ export default function CyberNoirLayout() {
                     border: isActive ? undefined : '1px solid transparent',
                     letterSpacing: '1px',
                   }}
+                  {...(item.tourId ? { 'data-tour': item.tourId } : {})}
                 >
                   <Icon size={16} />
                   <span>{item.label}</span>
@@ -162,7 +170,7 @@ export default function CyberNoirLayout() {
           </nav>
 
           {/* Footer */}
-          <div className="px-4 py-3" style={{ borderTop: `1px solid rgba(6,182,212,0.1)` }}>
+          <div className="px-4 py-3" style={{ borderTop: `1px solid rgba(6,182,212,0.1)` }} data-tour="variant-picker">
             <button
               onClick={() => navigate('/')}
               className="flex items-center gap-2 text-xs transition-all duration-200 hover:opacity-80"
@@ -199,6 +207,7 @@ export default function CyberNoirLayout() {
               )}
             </div>
             <div className="flex items-center gap-3">
+              <TakeTourButton />
               <div
                 className="h-2 w-2 rounded-full"
                 style={{
@@ -230,6 +239,7 @@ export default function CyberNoirLayout() {
               <Route path="ach/:matrixId" element={<ACHPage />} />
               <Route path="bias" element={<BiasPage />} />
               <Route path="export" element={<ExportPage />} />
+              <Route path="docs" element={<DocsPage />} />
             </Routes>
           </main>
         </div>

@@ -8,6 +8,7 @@ import {
   Crosshair,
   ArrowLeft,
   Radio,
+  BookOpen,
 } from 'lucide-react';
 import { ThemeProvider, type ThemeColors } from '../../contexts/ThemeContext';
 import { useProjectStore } from '../../store/useProjectStore';
@@ -15,6 +16,8 @@ import { HomePage } from '../../pages/HomePage';
 import { ACHPage } from '../../pages/ACHPage';
 import { BiasPage } from '../../pages/BiasPage';
 import { ExportPage } from '../../pages/ExportPage';
+import { DocsPage } from '../../pages/DocsPage';
+import { GuidedTour, TakeTourButton } from '../../components/GuidedTour';
 
 const THEME: ThemeColors = {
   bg: '#1a2e1a',
@@ -31,8 +34,9 @@ const THEME: ThemeColors = {
 const navItems = [
   { to: '', icon: Home, label: 'BASE OPS' },
   { to: 'ach', icon: Grid3X3, label: 'ACH MATRIX' },
-  { to: 'bias', icon: Brain, label: 'BIAS CHECK' },
-  { to: 'export', icon: Download, label: 'EXFIL DATA' },
+  { to: 'bias', icon: Brain, label: 'BIAS CHECK', tourId: 'bias-nav' },
+  { to: 'export', icon: Download, label: 'EXFIL DATA', tourId: 'export-nav' },
+  { to: 'docs', icon: BookOpen, label: 'FIELD MANUAL', tourId: 'docs-nav' },
 ];
 
 function formatMilTime(date: Date): string {
@@ -71,6 +75,9 @@ export default function StratcomLayout() {
           fontFamily: THEME.fontBody,
         }}
       >
+        {/* Guided tour */}
+        <GuidedTour />
+
         <style>{`
           .stratcom-grid {
             background-image:
@@ -170,6 +177,7 @@ export default function StratcomLayout() {
                     fontFamily: THEME.fontHeading,
                     letterSpacing: '1px',
                   }}
+                  {...(item.tourId ? { 'data-tour': item.tourId } : {})}
                 >
                   <Icon size={16} />
                   <span>{item.label}</span>
@@ -179,7 +187,7 @@ export default function StratcomLayout() {
           </nav>
 
           {/* Mission brief */}
-          <div className="px-4 py-3" style={{ borderTop: `1px solid ${THEME.border}` }}>
+          <div className="px-4 py-3" style={{ borderTop: `1px solid ${THEME.border}` }} data-tour="variant-picker">
             {activeProject && (
               <div className="mb-2">
                 <span
@@ -218,6 +226,7 @@ export default function StratcomLayout() {
               <span>CLASSIFICATION: UNCLASSIFIED // FOUO</span>
             </div>
             <div className="flex items-center gap-4 text-[10px]" style={{ color: THEME.textMuted }}>
+              <TakeTourButton />
               <span>{formatMilTime(time)}</span>
               <span>|</span>
               <span>{formatMilDate(time)}</span>
@@ -232,6 +241,7 @@ export default function StratcomLayout() {
               <Route path="ach/:matrixId" element={<ACHPage />} />
               <Route path="bias" element={<BiasPage />} />
               <Route path="export" element={<ExportPage />} />
+              <Route path="docs" element={<DocsPage />} />
             </Routes>
           </main>
         </div>

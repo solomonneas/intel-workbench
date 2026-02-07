@@ -6,6 +6,7 @@ import { HomePage } from './pages/HomePage';
 import { ACHPage } from './pages/ACHPage';
 import { BiasPage } from './pages/BiasPage';
 import { ExportPage } from './pages/ExportPage';
+import { DocsPage } from './pages/DocsPage';
 import { VariantPicker } from './pages/VariantPicker';
 
 // Lazy-load variant layouts for code splitting
@@ -36,6 +37,7 @@ function DefaultLayout() {
           <Route path="ach/:matrixId" element={<ACHPage />} />
           <Route path="bias" element={<BiasPage />} />
           <Route path="export" element={<ExportPage />} />
+          <Route path="docs" element={<DocsPage />} />
         </Routes>
       </AppShell>
     </ThemeProvider>

@@ -1,11 +1,13 @@
 import { Routes, Route, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Grid3X3, Brain, Download, ArrowLeft } from 'lucide-react';
+import { Home, Grid3X3, Brain, Download, ArrowLeft, BookOpen } from 'lucide-react';
 import { ThemeProvider, type ThemeColors } from '../../contexts/ThemeContext';
 import { useProjectStore } from '../../store/useProjectStore';
 import { HomePage } from '../../pages/HomePage';
 import { ACHPage } from '../../pages/ACHPage';
 import { BiasPage } from '../../pages/BiasPage';
 import { ExportPage } from '../../pages/ExportPage';
+import { DocsPage } from '../../pages/DocsPage';
+import { GuidedTour, TakeTourButton } from '../../components/GuidedTour';
 
 const THEME: ThemeColors = {
   bg: '#000000',
@@ -22,8 +24,9 @@ const THEME: ThemeColors = {
 const navItems = [
   { to: '', icon: Home, label: 'projects' },
   { to: 'ach', icon: Grid3X3, label: 'ach_matrix' },
-  { to: 'bias', icon: Brain, label: 'bias_check' },
-  { to: 'export', icon: Download, label: 'export' },
+  { to: 'bias', icon: Brain, label: 'bias_check', tourId: 'bias-nav' },
+  { to: 'export', icon: Download, label: 'export', tourId: 'export-nav' },
+  { to: 'docs', icon: BookOpen, label: 'docs', tourId: 'docs-nav' },
 ];
 
 export default function TerminalLayout() {
@@ -41,6 +44,9 @@ export default function TerminalLayout() {
           fontFamily: THEME.fontBody,
         }}
       >
+        {/* Guided tour */}
+        <GuidedTour />
+
         <style>{`
           @keyframes scanline {
             0% { transform: translateY(-100%); }
@@ -134,6 +140,7 @@ export default function TerminalLayout() {
                   className={`flex items-center gap-2 px-4 py-3 text-xs font-mono transition-all duration-150 ${
                     isActive ? 'terminal-tab-active' : 'terminal-tab-inactive'
                   }`}
+                  {...(item.tourId ? { 'data-tour': item.tourId } : {})}
                 >
                   <span>&gt;_</span>
                   <span>{item.label}</span>
@@ -144,6 +151,7 @@ export default function TerminalLayout() {
 
           {/* Right side info */}
           <div className="ml-auto flex items-center gap-4">
+            <TakeTourButton />
             {activeProject && (
               <span className="text-[10px]" style={{ color: THEME.textMuted }}>
                 [{activeProject.name}]
@@ -153,6 +161,7 @@ export default function TerminalLayout() {
               onClick={() => navigate('/')}
               className="flex items-center gap-1 text-[10px] transition-colors hover:opacity-80"
               style={{ color: THEME.textMuted }}
+              data-tour="variant-picker"
             >
               <ArrowLeft size={12} />
               exit
@@ -186,6 +195,7 @@ export default function TerminalLayout() {
             <Route path="ach/:matrixId" element={<ACHPage />} />
             <Route path="bias" element={<BiasPage />} />
             <Route path="export" element={<ExportPage />} />
+            <Route path="docs" element={<DocsPage />} />
           </Routes>
         </main>
 

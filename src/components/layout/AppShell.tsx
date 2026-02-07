@@ -8,9 +8,11 @@ import {
   Download,
   Shield,
   ChevronRight,
+  BookOpen,
 } from 'lucide-react';
 import { useProjectStore } from '../../store/useProjectStore';
 import { useBasePath } from '../../utils/useBasePath';
+import { GuidedTour, TakeTourButton } from '../GuidedTour';
 
 interface AppShellProps {
   children: ReactNode;
@@ -22,6 +24,7 @@ interface NavItem {
   label: string;
   disabled?: boolean;
   badge?: string;
+  tourId?: string;
 }
 
 export function AppShell({ children }: AppShellProps) {
@@ -44,6 +47,7 @@ export function AppShell({ children }: AppShellProps) {
       to: `${basePath}/bias`,
       icon: <Brain size={18} />,
       label: 'Bias Checklist',
+      tourId: 'bias-nav',
     },
     {
       to: '#',
@@ -56,11 +60,21 @@ export function AppShell({ children }: AppShellProps) {
       to: `${basePath}/export`,
       icon: <Download size={18} />,
       label: 'Export',
+      tourId: 'export-nav',
+    },
+    {
+      to: `${basePath}/docs`,
+      icon: <BookOpen size={18} />,
+      label: 'Docs',
+      tourId: 'docs-nav',
     },
   ];
 
   return (
     <div className="flex h-screen overflow-hidden">
+      {/* Guided tour (auto-starts on first visit) */}
+      <GuidedTour />
+
       {/* Sidebar */}
       <aside className="w-64 flex-shrink-0 bg-surface-800 border-r border-slate-700/50 flex flex-col">
         {/* Logo */}
@@ -103,6 +117,7 @@ export function AppShell({ children }: AppShellProps) {
                 key={item.to}
                 to={item.to}
                 className={isActive ? 'sidebar-link-active' : 'sidebar-link-inactive'}
+                {...(item.tourId ? { 'data-tour': item.tourId } : {})}
               >
                 {item.icon}
                 <span>{item.label}</span>
@@ -112,7 +127,7 @@ export function AppShell({ children }: AppShellProps) {
         </nav>
 
         {/* Footer */}
-        <div className="px-4 py-3 border-t border-slate-700/50">
+        <div className="px-4 py-3 border-t border-slate-700/50" data-tour="variant-picker">
           <p className="text-xxs text-slate-600 font-mono">
             v2.0.0 — Phase 2
           </p>
@@ -135,6 +150,7 @@ export function AppShell({ children }: AppShellProps) {
             )}
           </div>
           <div className="flex items-center gap-3">
+            <TakeTourButton />
             {activeProject && (
               <span className="text-xxs font-mono text-slate-500">
                 {activeProject.achMatrices.length} matrices •{' '}
