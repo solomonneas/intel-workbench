@@ -10,6 +10,7 @@ import {
   ChevronRight,
 } from 'lucide-react';
 import { useProjectStore } from '../../store/useProjectStore';
+import { useBasePath } from '../../utils/useBasePath';
 
 interface AppShellProps {
   children: ReactNode;
@@ -26,34 +27,33 @@ interface NavItem {
 export function AppShell({ children }: AppShellProps) {
   const activeProject = useProjectStore((s) => s.getActiveProject());
   const location = useLocation();
+  const basePath = useBasePath();
 
   const navItems: NavItem[] = [
     {
-      to: '/',
+      to: `${basePath}/`,
       icon: <Home size={18} />,
       label: 'Projects',
     },
     {
-      to: '/ach',
+      to: `${basePath}/ach`,
       icon: <Grid3X3 size={18} />,
       label: 'ACH Matrix',
     },
     {
-      to: '#',
+      to: `${basePath}/bias`,
       icon: <Brain size={18} />,
       label: 'Bias Checklist',
-      disabled: true,
-      badge: 'Phase 2',
     },
     {
       to: '#',
       icon: <Diamond size={18} />,
       label: 'Diamond Model',
       disabled: true,
-      badge: 'Phase 2',
+      badge: 'Phase 3',
     },
     {
-      to: '/export',
+      to: `${basePath}/export`,
       icon: <Download size={18} />,
       label: 'Export',
     },
@@ -93,10 +93,10 @@ export function AppShell({ children }: AppShellProps) {
               );
             }
 
-            const isActive =
-              item.to === '/'
-                ? location.pathname === '/'
-                : location.pathname.startsWith(item.to);
+            const isHome = item.to === `${basePath}/`;
+            const isActive = isHome
+              ? location.pathname === `${basePath}` || location.pathname === `${basePath}/`
+              : location.pathname.startsWith(item.to);
 
             return (
               <NavLink
@@ -114,7 +114,7 @@ export function AppShell({ children }: AppShellProps) {
         {/* Footer */}
         <div className="px-4 py-3 border-t border-slate-700/50">
           <p className="text-xxs text-slate-600 font-mono">
-            v1.0.0 — Phase 1
+            v2.0.0 — Phase 2
           </p>
         </div>
       </aside>

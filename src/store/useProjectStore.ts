@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Project, ACHMatrix, Evidence, Hypothesis, ConsistencyRating } from '../types';
+import type { Project, ACHMatrix, Evidence, Hypothesis, ConsistencyRating, BiasChecklist } from '../types';
 import { generateId } from '../utils/id';
 import { sampleProject } from '../data/sampleProject';
 
@@ -37,6 +37,11 @@ interface ProjectStore {
 
   // Ratings
   setRating: (projectId: string, matrixId: string, evidenceId: string, hypothesisId: string, rating: ConsistencyRating) => void;
+
+  // Bias Checklist CRUD
+  addBiasChecklist: (projectId: string, checklist: BiasChecklist) => void;
+  toggleBias: (projectId: string, checklistId: string, biasId: string) => void;
+  updateBiasMitigation: (projectId: string, checklistId: string, biasId: string, notes: string) => void;
 
   // Import/Export
   exportProject: (id: string) => string | null;
@@ -324,6 +329,66 @@ export const useProjectStore = create<ProjectStore>()(
                           },
                         })
                       : m
+                  ),
+                })
+              : p
+          ),
+        }));
+      },
+
+      // Bias Checklist operations
+      addBiasChecklist: (projectId, checklist) => {
+        set((state) => ({
+          projects: state.projects.map((p) =>
+            p.id === projectId
+              ? updateProjectTimestamp({
+                  ...p,
+                  biasChecklists: [...p.biasChecklists, checklist],
+                })
+              : p
+          ),
+        }));
+      },
+
+      toggleBias: (projectId, checklistId, biasId) => {
+        set((state) => ({
+          projects: state.projects.map((p) =>
+            p.id === projectId
+              ? updateProjectTimestamp({
+                  ...p,
+                  biasChecklists: p.biasChecklists.map((cl) =>
+                    cl.id === checklistId
+                      ? {
+                          ...cl,
+                          updatedAt: new Date().toISOString(),
+                          biases: cl.biases.map((b) =>
+                            b.id === biasId ? { ...b, checked: !b.checked } : b
+                          ),
+                        }
+                      : cl
+                  ),
+                })
+              : p
+          ),
+        }));
+      },
+
+      updateBiasMitigation: (projectId, checklistId, biasId, notes) => {
+        set((state) => ({
+          projects: state.projects.map((p) =>
+            p.id === projectId
+              ? updateProjectTimestamp({
+                  ...p,
+                  biasChecklists: p.biasChecklists.map((cl) =>
+                    cl.id === checklistId
+                      ? {
+                          ...cl,
+                          updatedAt: new Date().toISOString(),
+                          biases: cl.biases.map((b) =>
+                            b.id === biasId ? { ...b, mitigationNotes: notes } : b
+                          ),
+                        }
+                      : cl
                   ),
                 })
               : p

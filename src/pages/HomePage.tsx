@@ -11,10 +11,12 @@ import {
   AlertTriangle,
 } from 'lucide-react';
 import { useProjectStore } from '../store/useProjectStore';
+import { useBasePath } from '../utils/useBasePath';
 
 export function HomePage() {
   const store = useProjectStore();
   const navigate = useNavigate();
+  const basePath = useBasePath();
   const [showCreate, setShowCreate] = useState(false);
   const [newName, setNewName] = useState('');
   const [newDesc, setNewDesc] = useState('');
@@ -27,17 +29,17 @@ export function HomePage() {
     setNewDesc('');
     setShowCreate(false);
     store.setActiveProject(id);
-    navigate('/ach');
+    navigate(`${basePath}/ach`);
   };
 
   const handleLoadSample = () => {
     store.loadSampleProject();
-    navigate('/ach');
+    navigate(`${basePath}/ach`);
   };
 
   const handleOpenProject = (id: string) => {
     store.setActiveProject(id);
-    navigate('/ach');
+    navigate(`${basePath}/ach`);
   };
 
   const handleDelete = (id: string) => {

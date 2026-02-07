@@ -3,10 +3,12 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Plus, Grid3X3, ChevronDown, Trash2 } from 'lucide-react';
 import { useProjectStore } from '../store/useProjectStore';
 import { ACHMatrix } from '../components/ach/ACHMatrix';
+import { useBasePath } from '../utils/useBasePath';
 
 export function ACHPage() {
   const { matrixId } = useParams<{ matrixId?: string }>();
   const navigate = useNavigate();
+  const basePath = useBasePath();
   const store = useProjectStore();
   const project = store.getActiveProject();
   const [showCreateMatrix, setShowCreateMatrix] = useState(false);
@@ -22,7 +24,7 @@ export function ACHPage() {
           <p className="text-sm text-slate-500 mb-4">
             Select or create a project from the home page to begin analysis.
           </p>
-          <button onClick={() => navigate('/')} className="btn-primary">
+          <button onClick={() => navigate(`${basePath}/`)} className="btn-primary">
             Go to Projects
           </button>
         </div>
@@ -40,12 +42,12 @@ export function ACHPage() {
     const id = store.createMatrix(project.id, newMatrixName.trim());
     setNewMatrixName('');
     setShowCreateMatrix(false);
-    navigate(`/ach/${id}`);
+    navigate(`${basePath}/ach/${id}`);
   };
 
   const handleSelectMatrix = (id: string) => {
     setShowMatrixSelector(false);
-    navigate(`/ach/${id}`);
+    navigate(`${basePath}/ach/${id}`);
   };
 
   const handleDeleteMatrix = (id: string) => {
@@ -53,9 +55,9 @@ export function ACHPage() {
     if (activeMatrix?.id === id) {
       const remaining = project.achMatrices.filter((m) => m.id !== id);
       if (remaining.length > 0) {
-        navigate(`/ach/${remaining[0].id}`);
+        navigate(`${basePath}/ach/${remaining[0].id}`);
       } else {
-        navigate('/ach');
+        navigate(`${basePath}/ach`);
       }
     }
   };

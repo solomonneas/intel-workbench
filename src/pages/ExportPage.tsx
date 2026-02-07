@@ -11,10 +11,12 @@ import {
 } from 'lucide-react';
 import { useProjectStore } from '../store/useProjectStore';
 import { calculateAllScores, findPreferredHypothesis } from '../utils/achScoring';
+import { useBasePath } from '../utils/useBasePath';
 
 export function ExportPage() {
   const store = useProjectStore();
   const navigate = useNavigate();
+  const basePath = useBasePath();
   const project = store.getActiveProject();
   const [copied, setCopied] = useState(false);
   const [exportFormat, setExportFormat] = useState<'json' | 'markdown'>('json');
@@ -31,7 +33,7 @@ export function ExportPage() {
           <p className="text-sm text-slate-500 mb-4">
             Select a project to export its data.
           </p>
-          <button onClick={() => navigate('/')} className="btn-primary">
+          <button onClick={() => navigate(`${basePath}/`)} className="btn-primary">
             Go to Projects
           </button>
         </div>
@@ -91,6 +93,23 @@ export function ExportPage() {
       // Legend
       lines.push('*Legend: C = Consistent, I = Inconsistent, N = Neutral, NA = Not Applicable*');
       lines.push('*Scoring: I = +2, N = 0, C = -1 (weighted by evidence credibility: H=3, M=2, L=1)*');
+      lines.push('');
+    }
+
+    // Bias checklists
+    for (const checklist of project.biasChecklists) {
+      lines.push(`## Bias Checklist: ${checklist.name}`);
+      lines.push('');
+      const checked = checklist.biases.filter((b) => b.checked).length;
+      lines.push(`**Progress:** ${checked}/${checklist.biases.length} reviewed`);
+      lines.push('');
+      lines.push('| Bias | Category | Reviewed | Mitigation Notes |');
+      lines.push('| --- | --- | --- | --- |');
+      for (const bias of checklist.biases) {
+        const status = bias.checked ? '✅' : '⬜';
+        const notes = bias.mitigationNotes.replace(/\|/g, '\\|').substring(0, 100);
+        lines.push(`| ${bias.name} | ${bias.category} | ${status} | ${notes} |`);
+      }
       lines.push('');
     }
 
