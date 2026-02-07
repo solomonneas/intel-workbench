@@ -8,6 +8,7 @@ import { BiasPage } from './pages/BiasPage';
 import { ExportPage } from './pages/ExportPage';
 import { DocsPage } from './pages/DocsPage';
 import { VariantPicker } from './pages/VariantPicker';
+import KeyboardHints from './components/KeyboardHints';
 
 // Lazy-load variant layouts for code splitting
 const V1Layout = lazy(() => import('./variants/v1/Layout'));
@@ -63,6 +64,7 @@ function App() {
   return (
     <Suspense fallback={<LoadingFallback />}>
       <VariantKeyboardNav />
+      <KeyboardHints />
       <Routes>
         {/* Variant picker landing */}
         <Route path="/" element={<VariantPicker />} />

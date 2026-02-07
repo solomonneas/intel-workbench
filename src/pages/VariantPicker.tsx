@@ -151,8 +151,13 @@ export function VariantPicker() {
                       title="Secondary accent"
                     />
                   )}
-                  <span className="ml-auto text-xxs font-mono text-slate-500 group-hover:text-cyan-400 transition-colors">
-                    Enter →
+                  <span className="ml-auto flex items-center gap-2">
+                    <kbd className="text-xs font-mono px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-slate-600 group-hover:text-slate-400 transition-colors">
+                      {variant.id}
+                    </kbd>
+                    <span className="text-xxs font-mono text-slate-500 group-hover:text-cyan-400 transition-colors">
+                      Enter →
+                    </span>
                   </span>
                 </div>
               </div>
