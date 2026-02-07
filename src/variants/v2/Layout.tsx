@@ -210,7 +210,7 @@ export default function TerminalLayout() {
         >
           <span>TERMINAL v2.0</span>
           <span className="mx-3">|</span>
-          <span>INTEL-WORKBENCH // OSINT TOOLKIT</span>
+          <span>{"INTEL-WORKBENCH // OSINT TOOLKIT"}</span>
           <span className="ml-auto">{new Date().toISOString()}</span>
         </footer>
       </div>

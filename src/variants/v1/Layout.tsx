@@ -115,7 +115,7 @@ export default function LangleyLayout() {
               borderBottom: `1px solid ${THEME.border}`,
             }}
           >
-            TS // EYES ONLY
+            {"TS // EYES ONLY"}
           </div>
 
           {/* Navigation */}

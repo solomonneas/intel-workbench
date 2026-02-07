@@ -96,7 +96,7 @@ npm run preview
 
 ## 📁 Project Structure
 
-```
+```text
 intel-workbench/
 ├── index.html                 # Entry point + CDN links
 ├── package.json
@@ -178,7 +178,7 @@ The key insight: **disprove rather than prove.** A single strong inconsistency c
 
 ### Scoring Formula
 
-```
+```text
 Score = Σ (weight × rating_value)
 
 where:

@@ -40,17 +40,17 @@ const navItems = [
 ];
 
 function formatMilTime(date: Date): string {
-  const h = date.getHours().toString().padStart(2, '0');
-  const m = date.getMinutes().toString().padStart(2, '0');
-  const s = date.getSeconds().toString().padStart(2, '0');
+  const h = date.getUTCHours().toString().padStart(2, '0');
+  const m = date.getUTCMinutes().toString().padStart(2, '0');
+  const s = date.getUTCSeconds().toString().padStart(2, '0');
   return `${h}:${m}:${s}Z`;
 }
 
 function formatMilDate(date: Date): string {
-  const day = date.getDate().toString().padStart(2, '0');
+  const day = date.getUTCDate().toString().padStart(2, '0');
   const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
-  const month = months[date.getMonth()];
-  const year = date.getFullYear();
+  const month = months[date.getUTCMonth()];
+  const year = date.getUTCFullYear();
   return `${day} ${month} ${year}`;
 }
 

@@ -123,7 +123,7 @@ export default function CyberNoirLayout() {
                 CYBER NOIR
               </h1>
               <p className="text-[9px] tracking-[1px]" style={{ color: THEME.textMuted }}>
-                Intelligence Analysis // v2.0
+                {"Intelligence Analysis // v2.0"}
               </p>
             </div>
           </div>

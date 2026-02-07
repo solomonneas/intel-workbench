@@ -98,6 +98,9 @@ export function BiasChecklist({ biases, onToggleBias, onUpdateMitigation }: Bias
                     <button
                       onClick={() => onToggleBias(bias.id)}
                       className="flex-shrink-0 mt-0.5 transition-colors"
+                      role="checkbox"
+                      aria-checked={bias.checked}
+                      aria-label={`${bias.name}: ${bias.checked ? 'reviewed' : 'not reviewed'}`}
                       title={bias.checked ? 'Mark as not reviewed' : 'Mark as reviewed'}
                     >
                       {bias.checked ? (
