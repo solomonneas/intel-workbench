@@ -29,7 +29,7 @@ export const KeyboardHints: React.FC<KeyboardHintsProps> = ({
 
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement || (e.target instanceof HTMLElement && e.target.isContentEditable)) return;
       if (e.key === '?') {
         e.preventDefault();
         setOpen((o) => !o);
@@ -42,7 +42,7 @@ export const KeyboardHints: React.FC<KeyboardHintsProps> = ({
   // Show toast on variant switch
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement || e.target instanceof HTMLSelectElement || (e.target instanceof HTMLElement && e.target.isContentEditable)) return;
       const num = parseInt(e.key);
       if (num >= 1 && num <= 5) {
         setToast(`Variant ${num}`);
