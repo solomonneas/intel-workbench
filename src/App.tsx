@@ -60,7 +60,9 @@ function VariantKeyboardNav() {
   const navigate = useNavigate();
   useEffect(() => {
     const handleKey = (e: KeyboardEvent) => {
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement ||
+          e.target instanceof HTMLSelectElement ||
+          (e.target instanceof HTMLElement && e.target.isContentEditable)) return;
       const num = parseInt(e.key);
       if (num >= 1 && num <= 5) navigate(`/v${num}`);
       else if (e.key === 'Escape' || e.key === '0') navigate('/');
@@ -71,10 +73,9 @@ function VariantKeyboardNav() {
   return null;
 }
 
-function DefaultVariantRedirect() {
+function DefaultVariantRedirect({ defaultVariant }: { defaultVariant: number | null }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const { defaultVariant } = useDefaultVariant(APP_ID);
 
   useEffect(() => {
     if (location.pathname === '/' && defaultVariant) {
@@ -94,7 +95,7 @@ function App() {
   return (
     <Suspense fallback={<LoadingFallback />}>
       <VariantKeyboardNav />
-      <DefaultVariantRedirect />
+      <DefaultVariantRedirect defaultVariant={defaultVariant} />
       <KeyboardHints />
       <VariantSettings
         currentVariant={currentVariant}
