@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="MIT License" />
 </p>
 
-# 🛡️ Intel Workbench
+# 🛡️ Solomon's Intel Workbench
 
 **Structured analytic techniques for cyber threat intelligence — built for the modern analyst.**
 
