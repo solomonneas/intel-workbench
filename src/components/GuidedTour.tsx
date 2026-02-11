@@ -50,7 +50,7 @@ const TOUR_STORAGE_KEY = 'intel-workbench-tour-complete';
 const TOUR_STEPS: DriverStep[] = [
   {
     popover: {
-      title: '🛡️ Welcome to Intel Workbench',
+      title: '🛡️ Welcome to Solomon\'s Intel Workbench',
       description:
         'Intel Workbench helps you perform structured Analysis of Competing Hypotheses (ACH). Let\'s take a quick tour of the key features.',
       side: 'bottom',
