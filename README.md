@@ -3,15 +3,15 @@
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
   <img src="https://img.shields.io/badge/Zustand-4-FFD43B?style=flat-square" alt="Zustand" />
-  <img src="https://img.shields.io/badge/Vite-5-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite" />
   <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="MIT License" />
 </p>
 
 # 🛡️ Solomon's Intel Workbench
 
-**Structured analytic techniques for cyber threat intelligence — built for the modern analyst.**
+**Structured analytic techniques for cyber threat intelligence. Built for the modern analyst.**
 
-Intel Workbench is an interactive Analysis of Competing Hypotheses (ACH) tool that brings rigorous intelligence methodology to the browser. Score evidence against hypotheses, identify cognitive biases, and export structured assessments — all with zero backend, full offline capability, and five distinct visual themes.
+Intel Workbench is an interactive Analysis of Competing Hypotheses (ACH) tool that brings rigorous intelligence methodology to the browser. Score evidence against hypotheses, identify cognitive biases, and export structured assessments. Zero backend, full offline capability, and five distinct visual themes.
 
 ![Intel Workbench](docs/screenshots/dashboard.png)
 
@@ -19,16 +19,16 @@ Intel Workbench is an interactive Analysis of Competing Hypotheses (ACH) tool th
 
 ## ✨ Features
 
-- **ACH Matrix** — Interactive evidence-vs-hypothesis grid with consistency ratings (C/I/N/NA), weighted scoring, and automatic preferred-hypothesis identification
-- **Cognitive Bias Checklist** — Heuer & Pherson taxonomy with 12 biases across Cognitive, Analytical, and Social categories; track mitigation notes per bias
-- **Score Visualization** — Real-time normalized score bars showing hypothesis support levels with color-coded confidence indicators
-- **Evidence Weighting** — Credibility and relevance ratings (High/Medium/Low) that feed into weighted inconsistency scores
-- **Export & Import** — Full JSON export/import for backup and sharing; Markdown export for report generation
-- **5 Visual Themes** — Langley (classified intel), Terminal (hacker/OSINT), Analyst's Desk (clean professional), Stratcom (military command), Cyber Noir (cyberpunk)
-- **In-App Guided Tour** — First-visit walkthrough powered by driver.js highlighting every major feature
-- **Built-In Documentation** — Comprehensive help page covering ACH methodology, scoring, bias awareness, and keyboard shortcuts
-- **Offline-First** — All data persisted in localStorage; works without any server
-- **Keyboard Accessible** — Full keyboard navigation across the matrix grid
+- **ACH Matrix** : Interactive evidence-vs-hypothesis grid with consistency ratings (C/I/N/NA), weighted scoring, and automatic preferred-hypothesis identification
+- **Cognitive Bias Checklist** : Heuer & Pherson taxonomy with 12 biases across Cognitive, Analytical, and Social categories; track mitigation notes per bias
+- **Score Visualization** : Real-time normalized score bars showing hypothesis support levels with color-coded confidence indicators
+- **Evidence Weighting** : Credibility and relevance ratings (High/Medium/Low) that feed into weighted inconsistency scores
+- **Export & Import** : Full JSON export/import for backup and sharing; Markdown export for report generation
+- **5 Visual Themes** : Langley (classified intel), Terminal (hacker/OSINT), Analyst's Desk (clean professional), Stratcom (military command), Cyber Noir (cyberpunk)
+- **In-App Guided Tour** : First-visit walkthrough powered by driver.js highlighting every major feature
+- **Built-In Documentation** : Comprehensive help page covering ACH methodology, scoring, bias awareness, and keyboard shortcuts
+- **Offline-First** : All data persisted in localStorage; works without any server
+- **Keyboard Accessible** : Full keyboard navigation across the matrix grid
 
 ---
 
@@ -62,7 +62,7 @@ Browser
 ### Install & Run
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/intel-workbench.git
+git clone https://github.com/solomonneas/intel-workbench.git
 cd intel-workbench
 npm install
 npm run dev
@@ -89,7 +89,7 @@ npm run preview
 | **State** | Zustand 4 | Global state + persistence |
 | **Routing** | React Router 6 | Client-side navigation |
 | **Icons** | Lucide React | Consistent icon set |
-| **Bundler** | Vite 5 | Dev server + build |
+| **Bundler** | Vite 7 | Dev server + build |
 | **Tour** | driver.js 1.3 (CDN) | Guided onboarding |
 
 ---
@@ -154,13 +154,13 @@ Each variant wraps the same core pages in a unique visual identity:
 
 | Variant | Theme | Aesthetic |
 |---------|-------|-----------|
-| **v1 — Langley** | Intelligence Agency | Dark navy, gold accents, serif type, classified stamps |
-| **v2 — Terminal** | Hacker / OSINT | Pure black, matrix green, scanline overlay, monospace |
-| **v3 — Analyst's Desk** | Clean Professional | Light backgrounds, blue accents, content-first layout |
-| **v4 — Stratcom** | Military Command | OD green, amber accents, grid patterns, military time |
-| **v5 — Cyber Noir** | Cyberpunk | Neon cyan + magenta, glow effects, glass-morphism |
+| **v1 : Langley** | Intelligence Agency | Dark navy, gold accents, serif type, classified stamps |
+| **v2 : Terminal** | Hacker / OSINT | Pure black, matrix green, scanline overlay, monospace |
+| **v3 : Analyst's Desk** | Clean Professional | Light backgrounds, blue accents, content-first layout |
+| **v4 : Stratcom** | Military Command | OD green, amber accents, grid patterns, military time |
+| **v5 : Cyber Noir** | Cyberpunk | Neon cyan + magenta, glow effects, glass-morphism |
 
-All variants share the same Zustand store and page components. Switching themes is instant — just navigate back to the variant picker at `/`.
+All variants share the same Zustand store and page components. Switching themes is instant : just navigate back to the variant picker at `/`.
 
 ---
 
@@ -171,7 +171,7 @@ All variants share the same Zustand store and page components. Switching themes 
 1. **Enumerate all reasonable hypotheses**
 2. **List all significant evidence and arguments**
 3. **Rate each evidence item against each hypothesis** as Consistent (C), Inconsistent (I), Neutral (N), or Not Applicable (NA)
-4. **Score inconsistencies** — the hypothesis with the *fewest* weighted inconsistencies is the most supported
+4. **Score inconsistencies** : the hypothesis with the *fewest* weighted inconsistencies is the most supported
 5. **Identify and mitigate cognitive biases** that might distort the analysis
 
 The key insight: **disprove rather than prove.** A single strong inconsistency can eliminate a hypothesis, while consistent evidence alone cannot confirm one.
@@ -193,4 +193,4 @@ Lower (more negative) scores indicate stronger support. The hypothesis with the 
 
 ## 📄 License
 
-MIT — see [LICENSE](LICENSE) for details.
+MIT : see [LICENSE](LICENSE) for details.
