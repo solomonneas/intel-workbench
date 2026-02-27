@@ -106,7 +106,7 @@
 
   .input-field {
     @apply w-full px-3 py-2 rounded-lg text-sm
-           focus:outline-none focus:ring-2 focus:ring-accent-500/50
+           focus:outline-none focus:ring-2 focus:ring-2
            transition-all duration-150;
     background-color: var(--iw-bg);
     border: 1px solid var(--iw-border);
