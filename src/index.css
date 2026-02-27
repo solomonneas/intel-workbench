@@ -1,25 +1,36 @@
+:root {
+  --iw-bg: #0b0f19;
+  --iw-surface: #111827;
+  --iw-accent: #06b6d4;
+  --iw-text: #e2e8f0;
+  --iw-text-muted: #94a3b8;
+  --iw-border: rgba(51,65,85,0.5);
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   * {
-    @apply border-slate-700/50;
+    border-color: var(--iw-border);
   }
 
   body {
-    @apply bg-surface-900 text-slate-200 font-sans;
+    background-color: var(--iw-bg);
+    color: var(--iw-text);
+    @apply font-sans;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   }
 
-  /* Custom scrollbar for dark theme */
+  /* Custom scrollbar */
   ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-surface-900;
+    background-color: var(--iw-bg);
   }
 
   ::-webkit-scrollbar-thumb {
@@ -38,40 +49,74 @@
 
 @layer components {
   .btn-primary {
-    @apply px-4 py-2 bg-accent-600 hover:bg-accent-500 text-white text-sm font-medium rounded-lg
+    @apply px-4 py-2 text-white text-sm font-medium rounded-lg
            transition-all duration-150 ease-in-out
-           focus:outline-none focus:ring-2 focus:ring-accent-500/50 focus:ring-offset-2 focus:ring-offset-surface-900
+           focus:outline-none focus:ring-2 focus:ring-offset-2
            disabled:opacity-50 disabled:cursor-not-allowed;
+    background-color: var(--iw-accent);
+    --tw-ring-color: var(--iw-accent);
+    --tw-ring-offset-color: var(--iw-bg);
+  }
+
+  .btn-primary:hover {
+    filter: brightness(1.1);
   }
 
   .btn-secondary {
-    @apply px-4 py-2 bg-surface-700 hover:bg-surface-600 text-slate-200 text-sm font-medium rounded-lg
-           border border-slate-600/50 hover:border-slate-500/50
+    @apply px-4 py-2 text-sm font-medium rounded-lg
            transition-all duration-150 ease-in-out
-           focus:outline-none focus:ring-2 focus:ring-slate-500/50 focus:ring-offset-2 focus:ring-offset-surface-900;
+           focus:outline-none focus:ring-2 focus:ring-slate-500/50 focus:ring-offset-2;
+    background-color: var(--iw-surface);
+    border: 1px solid var(--iw-border);
+    color: var(--iw-text);
+    --tw-ring-offset-color: var(--iw-bg);
+  }
+
+  .btn-secondary:hover {
+    background-color: color-mix(in srgb, var(--iw-text) 8%, var(--iw-surface));
+    border-color: var(--iw-text-muted);
   }
 
   .btn-danger {
     @apply px-4 py-2 bg-red-600/20 hover:bg-red-600/40 text-red-400 text-sm font-medium rounded-lg
            border border-red-500/30 hover:border-red-500/50
            transition-all duration-150 ease-in-out
-           focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2 focus:ring-offset-surface-900;
+           focus:outline-none focus:ring-2 focus:ring-red-500/50 focus:ring-offset-2;
+    --tw-ring-offset-color: var(--iw-bg);
   }
 
   .btn-ghost {
-    @apply px-3 py-1.5 text-slate-400 hover:text-slate-200 hover:bg-surface-700 text-sm rounded-lg
+    @apply px-3 py-1.5 text-sm rounded-lg
            transition-all duration-150 ease-in-out;
+    color: var(--iw-text-muted);
+  }
+
+  .btn-ghost:hover {
+    color: var(--iw-text);
+    background-color: color-mix(in srgb, var(--iw-text) 8%, var(--iw-bg));
   }
 
   .card {
-    @apply bg-surface-800 border border-slate-700/50 rounded-xl shadow-lg shadow-black/20;
+    @apply rounded-xl shadow-lg shadow-black/20;
+    background-color: var(--iw-surface);
+    border: 1px solid var(--iw-border);
   }
 
   .input-field {
-    @apply w-full px-3 py-2 bg-surface-900 border border-slate-600/50 rounded-lg text-slate-200
-           placeholder:text-slate-500 text-sm
-           focus:outline-none focus:ring-2 focus:ring-accent-500/50 focus:border-accent-500/50
+    @apply w-full px-3 py-2 rounded-lg text-sm
+           focus:outline-none focus:ring-2 focus:ring-accent-500/50
            transition-all duration-150;
+    background-color: var(--iw-bg);
+    border: 1px solid var(--iw-border);
+    color: var(--iw-text);
+  }
+
+  .input-field::placeholder {
+    color: var(--iw-text-muted);
+  }
+
+  .input-field:focus {
+    border-color: var(--iw-accent);
   }
 
   .badge {
@@ -96,14 +141,24 @@
   }
 
   .sidebar-link-active {
-    @apply sidebar-link bg-accent-500/10 text-accent-400 border-l-2 border-accent-500;
+    @apply sidebar-link border-l-2;
+    background-color: color-mix(in srgb, var(--iw-accent) 10%, var(--iw-bg));
+    color: var(--iw-accent);
+    border-left-color: var(--iw-accent);
   }
 
   .sidebar-link-inactive {
-    @apply sidebar-link text-slate-400 hover:text-slate-200 hover:bg-surface-700;
+    @apply sidebar-link;
+    color: var(--iw-text-muted);
+  }
+
+  .sidebar-link-inactive:hover {
+    color: var(--iw-text);
+    background-color: var(--iw-surface);
   }
 
   .sidebar-link-disabled {
-    @apply sidebar-link text-slate-600 cursor-not-allowed;
+    @apply sidebar-link cursor-not-allowed;
+    color: color-mix(in srgb, var(--iw-text-muted) 50%, var(--iw-bg));
   }
 }
