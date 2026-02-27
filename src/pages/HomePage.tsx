@@ -52,12 +52,12 @@ export function HomePage() {
       {/* Header */}
       <div>
         <div className="flex items-center gap-3 mb-2">
-          <Shield size={28} className="text-accent-500" />
-          <h1 className="text-2xl font-bold text-slate-100 tracking-tight">
+          <Shield size={28} style={{ color: "var(--iw-accent)" }} />
+          <h1 className="text-2xl font-bold tracking-tight" style={{ color: "var(--iw-text)" }}>
             Intelligence Analysis Workbench
           </h1>
         </div>
-        <p className="text-sm text-slate-400 max-w-2xl">
+        <p className="text-sm max-w-2xl" style={{ color: "var(--iw-text-muted)" }}>
           Structured analytic techniques for cyber threat intelligence. Apply rigorous methodology
           to attribution, hypothesis testing, and cognitive bias mitigation.
         </p>
@@ -78,10 +78,10 @@ export function HomePage() {
       {/* Create Form */}
       {showCreate && (
         <div className="card p-6">
-          <h3 className="text-sm font-semibold text-slate-200 mb-4">Create New Project</h3>
+          <h3 className="text-sm font-semibold mb-4" style={{ color: "var(--iw-text)" }}>Create New Project</h3>
           <div className="space-y-3">
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Project Name</label>
+              <label className="block text-xs font-medium mb-1" style={{color: "var(--iw-text-muted)"}}>Project Name</label>
               <input
                 autoFocus
                 className="input-field"
@@ -95,7 +95,7 @@ export function HomePage() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">
+              <label className="block text-xs font-medium mb-1" style={{color: "var(--iw-text-muted)"}}>
                 Description (optional)
               </label>
               <textarea
@@ -121,7 +121,7 @@ export function HomePage() {
       {/* Project List */}
       {store.projects.length > 0 ? (
         <div className="space-y-3">
-          <h2 className="text-sm font-mono font-semibold text-slate-400 uppercase tracking-wider">
+          <h2 className="text-sm font-mono font-semibold uppercase tracking-wider" style={{color: "var(--iw-text-muted)"}}>
             Projects ({store.projects.length})
           </h2>
           <div className="grid gap-3">
@@ -136,22 +136,22 @@ export function HomePage() {
                 <div className="flex items-start justify-between">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <FolderOpen size={16} className="text-accent-500 flex-shrink-0" />
-                      <h3 className="text-sm font-semibold text-slate-200 truncate">
+                      <FolderOpen size={16} className="flex-shrink-0" style={{color: "var(--iw-accent)"}} />
+                      <h3 className="text-sm font-semibold truncate" style={{color: "var(--iw-text)"}}>
                         {project.name}
                       </h3>
                     </div>
                     {project.description && (
-                      <p className="text-xs text-slate-400 line-clamp-2 ml-6">
+                      <p className="text-xs line-clamp-2 ml-6" style={{color: "var(--iw-text-muted)"}}>
                         {project.description}
                       </p>
                     )}
                     <div className="flex items-center gap-4 mt-2 ml-6">
-                      <span className="flex items-center gap-1 text-xxs font-mono text-slate-500">
+                      <span className="flex items-center gap-1 text-xxs font-mono" style={{color: "var(--iw-text-muted)"}}>
                         <Grid3X3 size={12} />
                         {project.achMatrices.length} matrices
                       </span>
-                      <span className="flex items-center gap-1 text-xxs font-mono text-slate-500">
+                      <span className="flex items-center gap-1 text-xxs font-mono" style={{color: "var(--iw-text-muted)"}}>
                         <Clock size={12} />
                         {new Date(project.updatedAt).toLocaleDateString()}
                       </span>
@@ -162,7 +162,7 @@ export function HomePage() {
                       e.stopPropagation();
                       setConfirmDeleteId(project.id);
                     }}
-                    className="opacity-0 group-hover:opacity-100 text-slate-600 hover:text-red-400 transition-all p-1"
+                    className="opacity-0 group-hover:opacity-100 hover:text-red-400 transition-all p-1" style={{ color: "var(--iw-text-muted)" }}
                     title="Delete project"
                   >
                     <Trash2 size={14} />
@@ -174,9 +174,9 @@ export function HomePage() {
         </div>
       ) : (
         <div className="card p-8 text-center">
-          <FolderOpen size={40} className="mx-auto text-slate-600 mb-3" />
-          <h3 className="text-sm font-medium text-slate-400 mb-1">No Projects Yet</h3>
-          <p className="text-xs text-slate-500">
+          <FolderOpen size={40} className="mx-auto mb-3" style={{color: "var(--iw-text-muted)"}} />
+          <h3 className="text-sm font-medium mb-1" style={{color: "var(--iw-text-muted)"}}>No Projects Yet</h3>
+          <p className="text-xs" style={{color: "var(--iw-text-muted)"}}>
             Create a new project or load the sample Sandworm analysis to get started.
           </p>
         </div>
@@ -190,10 +190,10 @@ export function HomePage() {
             onClick={() => setConfirmDeleteId(null)}
           />
           <div className="relative card p-6 w-full max-w-sm mx-4 shadow-2xl">
-            <h3 className="text-sm font-semibold text-slate-200 mb-4">Delete Project?</h3>
+            <h3 className="text-sm font-semibold mb-4" style={{color: "var(--iw-text)"}}>Delete Project?</h3>
             <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20 mb-4">
               <AlertTriangle size={18} className="text-red-400 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-slate-300">
+              <p className="text-sm" style={{color: "var(--iw-text)"}}>
                 This will permanently delete this project and all its matrices. This cannot be undone.
               </p>
             </div>

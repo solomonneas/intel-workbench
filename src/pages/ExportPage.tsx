@@ -28,9 +28,9 @@ export function ExportPage() {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
-          <Download size={48} className="mx-auto text-slate-600 mb-4" />
-          <h2 className="text-lg font-medium text-slate-300 mb-2">No Project Selected</h2>
-          <p className="text-sm text-slate-500 mb-4">
+          <Download size={48} className="mx-auto mb-4" style={{color: "var(--iw-text-muted)"}} />
+          <h2 className="text-lg font-medium mb-2" style={{color: "var(--iw-text)"}}>No Project Selected</h2>
+          <p className="text-sm mb-4" style={{color: "var(--iw-text-muted)"}}>
             Select a project to export its data.
           </p>
           <button onClick={() => navigate(`${basePath}/`)} className="btn-primary">
@@ -176,15 +176,15 @@ export function ExportPage() {
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div>
-        <h2 className="text-lg font-semibold text-slate-100 mb-1">Export & Import</h2>
-        <p className="text-sm text-slate-400">
+        <h2 className="text-lg font-semibold mb-1" style={{color: "var(--iw-text)"}}>Export & Import</h2>
+        <p className="text-sm" style={{color: "var(--iw-text-muted)"}}>
           Export your analysis as JSON (for backup/sharing) or Markdown (for reports).
         </p>
       </div>
 
       {/* Export */}
       <div className="card p-6 space-y-4">
-        <h3 className="text-sm font-semibold text-slate-200">Export Project</h3>
+        <h3 className="text-sm font-semibold" style={{color: "var(--iw-text)"}}>Export Project</h3>
 
         {/* Format selector */}
         <div className="flex gap-2">
@@ -193,8 +193,9 @@ export function ExportPage() {
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium transition-all ${
               exportFormat === 'json'
                 ? 'bg-accent-500/10 text-accent-400 border border-accent-500/30'
-                : 'bg-surface-700 text-slate-400 border border-slate-700/50 hover:text-slate-200'
+                : 'bg-surface-700 border border-slate-700/50 hover:text-slate-200'
             }`}
+            style={{ color: exportFormat === 'json' ? 'var(--iw-accent)' : 'var(--iw-text-muted)' }}
           >
             <FileJson size={16} />
             JSON
@@ -204,8 +205,9 @@ export function ExportPage() {
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-medium transition-all ${
               exportFormat === 'markdown'
                 ? 'bg-accent-500/10 text-accent-400 border border-accent-500/30'
-                : 'bg-surface-700 text-slate-400 border border-slate-700/50 hover:text-slate-200'
+                : 'bg-surface-700 border border-slate-700/50 hover:text-slate-200'
             }`}
+            style={{ color: exportFormat === 'markdown' ? 'var(--iw-accent)' : 'var(--iw-text-muted)' }}
           >
             <FileText size={16} />
             Markdown
@@ -214,7 +216,7 @@ export function ExportPage() {
 
         {/* Preview */}
         <div className="relative">
-          <pre className="bg-surface-900 border border-slate-700/50 rounded-lg p-4 text-xs font-mono text-slate-300 overflow-x-auto max-h-96 overflow-y-auto whitespace-pre-wrap">
+          <pre className="border border-slate-700/50 rounded-lg p-4 text-xs font-mono overflow-x-auto max-h-96 overflow-y-auto whitespace-pre-wrap" style={{color: "var(--iw-text)", backgroundColor: "var(--iw-bg)"}}>
             {getExportContent()}
           </pre>
         </div>
@@ -246,8 +248,8 @@ export function ExportPage() {
 
       {/* Import */}
       <div className="card p-6 space-y-4">
-        <h3 className="text-sm font-semibold text-slate-200">Import Project</h3>
-        <p className="text-xs text-slate-500">
+        <h3 className="text-sm font-semibold" style={{color: "var(--iw-text)"}}>Import Project</h3>
+        <p className="text-xs" style={{color: "var(--iw-text-muted)"}}>
           Paste a previously exported JSON project to import it. If a project with the same ID
           exists, it will be replaced.
         </p>

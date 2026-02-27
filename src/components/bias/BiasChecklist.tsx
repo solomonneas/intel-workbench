@@ -38,14 +38,14 @@ export function BiasChecklist({ biases, onToggleBias, onUpdateMitigation }: Bias
       {/* Progress bar */}
       <div className="card p-4">
         <div className="flex items-center justify-between mb-2">
-          <span className="text-xs font-mono font-semibold text-slate-400 uppercase tracking-wider">
+          <span className="text-xs font-mono font-semibold uppercase tracking-wider" style={{color: "var(--iw-text-muted)"}}>
             Bias Review Progress
           </span>
           <span className="text-xs font-mono" style={{ color: theme.accent }}>
             {checkedCount}/{totalCount} reviewed ({progressPct}%)
           </span>
         </div>
-        <div className="w-full h-2 rounded-full overflow-hidden bg-surface-900 border border-slate-700/30">
+        <div className="w-full h-2 rounded-full overflow-hidden border border-slate-700/30" style={{backgroundColor: "var(--iw-bg)"}}>
           <div
             className="h-full rounded-full transition-all duration-500"
             style={{
@@ -71,10 +71,10 @@ export function BiasChecklist({ biases, onToggleBias, onUpdateMitigation }: Bias
           <div key={category} className="space-y-2">
             <div className="flex items-center gap-2 mb-3">
               <CategoryIcon size={16} className={config.color.split(' ')[0]} />
-              <h3 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">
+              <h3 className="text-sm font-semibold uppercase tracking-wider" style={{color: "var(--iw-text)"}}>
                 {config.label} Biases
               </h3>
-              <span className="text-xxs font-mono text-slate-500">
+              <span className="text-xxs font-mono" style={{color: "var(--iw-text-muted)"}}>
                 ({categoryChecked}/{categoryBiases.length})
               </span>
             </div>
@@ -108,7 +108,7 @@ export function BiasChecklist({ biases, onToggleBias, onUpdateMitigation }: Bias
                           strokeWidth={0}
                         />
                       ) : (
-                        <Circle size={20} className="text-slate-600 hover:text-slate-400" />
+                        <Circle size={20} className="hover:text-slate-400" style={{ color: "var(--iw-text-muted)" }} />
                       )}
                     </button>
 
@@ -117,8 +117,9 @@ export function BiasChecklist({ biases, onToggleBias, onUpdateMitigation }: Bias
                       <div className="flex items-center gap-2 mb-1 flex-wrap">
                         <span
                           className={`text-sm font-semibold ${
-                            bias.checked ? 'text-slate-400 line-through' : 'text-slate-200'
+                            bias.checked ? 'line-through' : ''
                           }`}
+                          style={{ color: bias.checked ? 'var(--iw-text-muted)' : 'var(--iw-text)' }}
                         >
                           {bias.name}
                         </span>
@@ -128,7 +129,7 @@ export function BiasChecklist({ biases, onToggleBias, onUpdateMitigation }: Bias
                           {bias.category}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-400 leading-relaxed">
+                      <p className="text-xs leading-relaxed" style={{color: "var(--iw-text-muted)"}}>
                         {bias.description}
                       </p>
                     </div>
@@ -136,7 +137,7 @@ export function BiasChecklist({ biases, onToggleBias, onUpdateMitigation }: Bias
                     {/* Expand toggle */}
                     <button
                       onClick={() => toggleExpanded(bias.id)}
-                      className="flex-shrink-0 text-slate-500 hover:text-slate-300 transition-colors p-1"
+                      className="flex-shrink-0 hover:text-slate-300 transition-colors p-1" style={{ color: "var(--iw-text-muted)" }}
                       title={isExpanded ? 'Collapse' : 'Expand mitigation notes'}
                     >
                       {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
@@ -146,7 +147,7 @@ export function BiasChecklist({ biases, onToggleBias, onUpdateMitigation }: Bias
                   {/* Expandable mitigation notes */}
                   {isExpanded && (
                     <div className="px-4 pb-4 pl-12">
-                      <label className="block text-xxs font-mono font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                      <label className="block text-xxs font-mono font-semibold uppercase tracking-wider mb-2" style={{color: "var(--iw-text-muted)"}}>
                         Mitigation Notes
                       </label>
                       <textarea

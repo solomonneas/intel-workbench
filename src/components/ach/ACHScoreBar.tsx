@@ -22,7 +22,7 @@ export function ACHScoreBar({ score, rawScore, isPreferred }: ACHScoreBarProps) 
     <div className="flex flex-col items-center gap-1">
       {/* Bar */}
       <div
-        className={`w-full h-3 rounded-full overflow-hidden bg-surface-900 border ${getBorderColor()}`}
+        className={`w-full h-3 rounded-full overflow-hidden border ${getBorderColor()}`} style={{ backgroundColor: "var(--iw-bg)" }}
       >
         <div
           className={`h-full rounded-full transition-all duration-500 ${getBarColor()}`}
@@ -32,8 +32,9 @@ export function ACHScoreBar({ score, rawScore, isPreferred }: ACHScoreBarProps) 
       {/* Raw score label */}
       <span
         className={`text-xxs font-mono ${
-          isPreferred ? 'text-intel-green font-bold' : 'text-slate-500'
+          isPreferred ? 'text-intel-green font-bold' : ''
         }`}
+        style={{ color: isPreferred ? undefined : 'var(--iw-text-muted)' }}
       >
         {rawScore > 0 ? '+' : ''}{rawScore}
       </span>
