@@ -16,9 +16,9 @@ export function BiasPage() {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
-          <Brain size={48} className="mx-auto text-slate-600 mb-4" />
-          <h2 className="text-lg font-medium text-slate-300 mb-2">No Project Selected</h2>
-          <p className="text-sm text-slate-500 mb-4">
+          <Brain size={48} className="mx-auto mb-4" style={{color: "var(--iw-text-muted)"}} />
+          <h2 className="text-lg font-medium mb-2" style={{color: "var(--iw-text)"}}>No Project Selected</h2>
+          <p className="text-sm mb-4" style={{color: "var(--iw-text-muted)"}}>
             Select or create a project to begin bias review.
           </p>
           <button onClick={() => navigate(`${basePath}/`)} className="btn-primary">
@@ -58,13 +58,13 @@ export function BiasPage() {
     return (
       <div className="max-w-3xl mx-auto space-y-6">
         <div className="flex items-center gap-3">
-          <Brain size={20} className="text-accent-500" />
-          <h2 className="text-lg font-semibold text-slate-100">Cognitive Bias Checklist</h2>
+          <Brain size={20} className="" style={{color: "var(--iw-accent)"}} />
+          <h2 className="text-lg font-semibold" style={{color: "var(--iw-text)"}}>Cognitive Bias Checklist</h2>
         </div>
         <div className="card p-8 text-center">
-          <Brain size={48} className="mx-auto text-slate-600 mb-4" />
-          <h3 className="text-lg font-medium text-slate-300 mb-2">No Bias Checklist Yet</h3>
-          <p className="text-sm text-slate-500 mb-6 max-w-md mx-auto">
+          <Brain size={48} className="mx-auto mb-4" style={{color: "var(--iw-text-muted)"}} />
+          <h3 className="text-lg font-medium mb-2" style={{color: "var(--iw-text)"}}>No Bias Checklist Yet</h3>
+          <p className="text-sm mb-6 max-w-md mx-auto" style={{color: "var(--iw-text-muted)"}}>
             Create a cognitive bias checklist based on Heuer &amp; Pherson's taxonomy to ensure
             analytical rigor and mitigate common thinking traps.
           </p>
@@ -81,14 +81,14 @@ export function BiasPage() {
     <div className="max-w-3xl mx-auto space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Brain size={20} className="text-accent-500" />
-          <h2 className="text-lg font-semibold text-slate-100">Cognitive Bias Checklist</h2>
+          <Brain size={20} className="" style={{color: "var(--iw-accent)"}} />
+          <h2 className="text-lg font-semibold" style={{color: "var(--iw-text)"}}>Cognitive Bias Checklist</h2>
         </div>
-        <span className="text-xxs font-mono text-slate-500">
+        <span className="text-xxs font-mono" style={{color: "var(--iw-text-muted)"}}>
           Heuer &amp; Pherson Taxonomy
         </span>
       </div>
-      <p className="text-sm text-slate-400">
+      <p className="text-sm" style={{color: "var(--iw-text-muted)"}}>
         Review each bias below. Check it off once you've considered whether it applies to your
         current analysis. Expand any item to view or edit mitigation notes.
       </p>

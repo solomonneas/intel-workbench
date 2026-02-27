@@ -19,9 +19,9 @@ export function ACHPage() {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
-          <Grid3X3 size={48} className="mx-auto text-slate-600 mb-4" />
-          <h2 className="text-lg font-medium text-slate-300 mb-2">No Project Selected</h2>
-          <p className="text-sm text-slate-500 mb-4">
+          <Grid3X3 size={48} className="mx-auto mb-4" style={{color: "var(--iw-text-muted)"}} />
+          <h2 className="text-lg font-medium mb-2" style={{color: "var(--iw-text)"}}>No Project Selected</h2>
+          <p className="text-sm mb-4" style={{color: "var(--iw-text-muted)"}}>
             Select or create a project from the home page to begin analysis.
           </p>
           <button onClick={() => navigate(`${basePath}/`)} className="btn-primary">
@@ -67,8 +67,8 @@ export function ACHPage() {
       {/* Matrix selector + controls */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Grid3X3 size={20} className="text-accent-500" />
-          <h2 className="text-lg font-semibold text-slate-100">Analysis of Competing Hypotheses</h2>
+          <Grid3X3 size={20} className="" style={{color: "var(--iw-accent)"}} />
+          <h2 className="text-lg font-semibold" style={{color: "var(--iw-text)"}}>Analysis of Competing Hypotheses</h2>
         </div>
         <div className="flex items-center gap-2">
           {/* Matrix selector dropdown */}
@@ -94,7 +94,7 @@ export function ACHPage() {
                         className={`flex items-center justify-between px-3 py-2 rounded-lg text-xs cursor-pointer transition-colors ${
                           m.id === activeMatrix?.id
                             ? 'bg-accent-500/10 text-accent-400'
-                            : 'text-slate-300 hover:bg-surface-700'
+                            : 'hover:bg-surface-700'
                         }`}
                       >
                         <span onClick={() => handleSelectMatrix(m.id)} className="flex-1">
@@ -105,7 +105,7 @@ export function ACHPage() {
                             e.stopPropagation();
                             handleDeleteMatrix(m.id);
                           }}
-                          className="text-slate-600 hover:text-red-400 transition-colors p-1"
+                          className="hover:text-red-400 transition-colors p-1" style={{ color: "var(--iw-text-muted)" }}
                         >
                           <Trash2 size={12} />
                         </button>
@@ -130,7 +130,7 @@ export function ACHPage() {
         <div className="card p-4">
           <div className="flex items-end gap-3">
             <div className="flex-1">
-              <label className="block text-xs font-medium text-slate-400 mb-1">Matrix Name</label>
+              <label className="block text-xs font-medium mb-1" style={{color: "var(--iw-text-muted)"}}>Matrix Name</label>
               <input
                 autoFocus
                 className="input-field"
@@ -158,9 +158,9 @@ export function ACHPage() {
         <ACHMatrix projectId={project.id} matrix={activeMatrix} />
       ) : (
         <div className="card p-8 text-center">
-          <Grid3X3 size={48} className="mx-auto text-slate-600 mb-4" />
-          <h3 className="text-lg font-medium text-slate-300 mb-2">No Matrices Yet</h3>
-          <p className="text-sm text-slate-500 mb-4">
+          <Grid3X3 size={48} className="mx-auto mb-4" style={{color: "var(--iw-text-muted)"}} />
+          <h3 className="text-lg font-medium mb-2" style={{color: "var(--iw-text)"}}>No Matrices Yet</h3>
+          <p className="text-sm mb-4" style={{color: "var(--iw-text-muted)"}}>
             Create an ACH matrix to begin structured hypothesis analysis.
           </p>
           <button onClick={() => setShowCreateMatrix(true)} className="btn-primary">

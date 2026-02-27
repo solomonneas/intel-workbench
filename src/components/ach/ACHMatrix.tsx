@@ -27,7 +27,7 @@ const RATING_STYLES: Record<ConsistencyRating, string> = {
   C: 'bg-green-500/20 text-green-400 border-green-500/30',
   I: 'bg-red-500/20 text-red-400 border-red-500/30',
   N: 'bg-gray-500/20 text-gray-400 border-gray-500/30',
-  NA: 'bg-transparent text-slate-600 border-slate-700/30',
+  NA: 'bg-transparent border-slate-700/30',
 };
 
 const RATING_LABELS: Record<ConsistencyRating, string> = {
@@ -147,9 +147,9 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
   if (matrix.hypotheses.length === 0 && matrix.evidence.length === 0) {
     return (
       <div className="card p-8 text-center">
-        <Grid3X3 size={48} className="mx-auto text-slate-600 mb-4" />
-        <h3 className="text-lg font-medium text-slate-300 mb-2">Empty Matrix</h3>
-        <p className="text-sm text-slate-500 mb-6 max-w-md mx-auto">
+        <Grid3X3 size={48} className="mx-auto mb-4" style={{color: "var(--iw-text-muted)"}} />
+        <h3 className="text-lg font-medium mb-2" style={{color: "var(--iw-text)"}}>Empty Matrix</h3>
+        <p className="text-sm mb-6 max-w-md mx-auto" style={{color: "var(--iw-text-muted)"}}>
           Start by adding hypotheses (columns) and evidence (rows) to build your Analysis of Competing Hypotheses matrix.
         </p>
         <div className="flex gap-3 justify-center">
@@ -190,13 +190,13 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
           <thead>
             <tr className="bg-surface-800">
               {/* Evidence header */}
-              <th className="sticky left-0 z-10 bg-surface-800 p-3 text-left text-xs font-mono font-semibold text-slate-400 uppercase tracking-wider border-b border-r border-slate-700/50 min-w-[300px]">
+              <th className="sticky left-0 z-10 bg-surface-800 p-3 text-left text-xs font-mono font-semibold uppercase tracking-wider border-b border-r border-slate-700/50 min-w-[300px]" style={{color: "var(--iw-text-muted)"}}>
                 Evidence / Indicators
               </th>
-              <th className="p-3 text-center text-xs font-mono font-semibold text-slate-500 uppercase tracking-wider border-b border-r border-slate-700/50 w-16">
+              <th className="p-3 text-center text-xs font-mono font-semibold uppercase tracking-wider border-b border-r border-slate-700/50 w-16" style={{color: "var(--iw-text-muted)"}}>
                 Cred.
               </th>
-              <th className="p-3 text-center text-xs font-mono font-semibold text-slate-500 uppercase tracking-wider border-b border-r border-slate-700/50 w-16">
+              <th className="p-3 text-center text-xs font-mono font-semibold uppercase tracking-wider border-b border-r border-slate-700/50 w-16" style={{color: "var(--iw-text-muted)"}}>
                 Rel.
               </th>
               {/* Hypothesis columns */}
@@ -229,7 +229,8 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
                         />
                       ) : (
                         <span
-                          className="text-xs font-semibold text-slate-200 cursor-pointer hover:text-accent-400 transition-colors focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:outline-none rounded"
+                          className="text-xs font-semibold cursor-pointer hover:text-accent-400 transition-colors focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:outline-none rounded"
+                          style={{ color: "var(--iw-text)" }}
                           onClick={() => startEditing('hypothesis', h.id, 'name', h.name)}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter' || e.key === ' ') {
@@ -246,12 +247,12 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
                         </span>
                       )}
                     </div>
-                    <span className="text-xxs font-mono text-slate-500">
+                    <span className="text-xxs font-mono" style={{color: "var(--iw-text-muted)"}}>
                       Score: {scores[h.id] ?? 0}
                     </span>
                     <button
                       onClick={() => setConfirmDelete({ type: 'hypothesis', id: h.id })}
-                      className="text-slate-600 hover:text-red-400 transition-colors p-0.5"
+                      className="hover:text-red-400 transition-colors p-0.5" style={{ color: "var(--iw-text-muted)" }}
                       title="Delete hypothesis"
                     >
                       <Trash2 size={12} />
@@ -296,7 +297,8 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
                         />
                       ) : (
                         <p
-                          className="text-xs text-slate-300 leading-relaxed cursor-pointer hover:text-slate-100 transition-colors focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:outline-none rounded"
+                          className="text-xs leading-relaxed cursor-pointer hover:text-slate-100 transition-colors focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:outline-none rounded"
+                          style={{ color: "var(--iw-text)" }}
                           onClick={() =>
                             startEditing('evidence', e.id, 'description', e.description)
                           }
@@ -314,11 +316,11 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
                           {e.description}
                         </p>
                       )}
-                      <p className="text-xxs text-slate-500 font-mono mt-1">{e.source}</p>
+                      <p className="text-xxs font-mono mt-1" style={{color: "var(--iw-text-muted)"}}>{e.source}</p>
                     </div>
                     <button
                       onClick={() => setConfirmDelete({ type: 'evidence', id: e.id })}
-                      className="flex-shrink-0 text-slate-600 hover:text-red-400 transition-colors p-0.5 mt-0.5"
+                      className="flex-shrink-0 hover:text-red-400 transition-colors p-0.5 mt-0.5" style={{ color: "var(--iw-text-muted)" }}
                       title="Delete evidence"
                     >
                       <Trash2 size={12} />
@@ -373,7 +375,7 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
             <tfoot data-tour="score-bar">
               <tr className="bg-surface-800 border-t border-slate-700/50">
                 <td className="sticky left-0 z-10 bg-surface-800 p-3 border-r border-slate-700/50">
-                  <span className="text-xs font-mono font-semibold text-slate-400 uppercase">
+                  <span className="text-xs font-mono font-semibold uppercase" style={{color: "var(--iw-text-muted)"}}>
                     Inconsistency Score
                   </span>
                 </td>
@@ -395,7 +397,7 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
       </div>
 
       {/* Legend */}
-      <div className="flex items-center gap-4 text-xxs font-mono text-slate-500">
+      <div className="flex items-center gap-4 text-xxs font-mono" style={{color: "var(--iw-text-muted)"}}>
         <span>Legend:</span>
         <span className="flex items-center gap-1">
           <span className="inline-block w-5 h-5 rounded border bg-green-500/20 border-green-500/30 text-center leading-5 text-green-400">
@@ -416,7 +418,7 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
           Neutral
         </span>
         <span className="flex items-center gap-1">
-          <span className="inline-block w-5 h-5 rounded border bg-transparent border-slate-700/30 text-center leading-5 text-slate-600">
+          <span className="inline-block w-5 h-5 rounded border bg-transparent border-slate-700/30 text-center leading-5" style={{color: "var(--iw-text-muted)"}}>
             —
           </span>
           N/A
@@ -428,7 +430,7 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
         <Modal title="Add Hypothesis" onClose={() => setShowAddHypothesis(false)}>
           <div className="space-y-3">
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Name</label>
+              <label className="block text-xs font-medium mb-1" style={{color: "var(--iw-text-muted)"}}>Name</label>
               <input
                 autoFocus
                 className="input-field"
@@ -441,7 +443,7 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">
+              <label className="block text-xs font-medium mb-1" style={{color: "var(--iw-text-muted)"}}>
                 Description (optional)
               </label>
               <textarea
@@ -469,7 +471,7 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
         <Modal title="Add Evidence" onClose={() => setShowAddEvidence(false)}>
           <div className="space-y-3">
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Description</label>
+              <label className="block text-xs font-medium mb-1" style={{color: "var(--iw-text-muted)"}}>Description</label>
               <textarea
                 autoFocus
                 className="input-field resize-none"
@@ -482,7 +484,7 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-400 mb-1">Source</label>
+              <label className="block text-xs font-medium mb-1" style={{color: "var(--iw-text-muted)"}}>Source</label>
               <input
                 className="input-field"
                 placeholder="e.g., OSINT, vendor report, government advisory"
@@ -494,7 +496,7 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1">Credibility</label>
+                <label className="block text-xs font-medium mb-1" style={{color: "var(--iw-text-muted)"}}>Credibility</label>
                 <select
                   className="input-field"
                   value={newEvidence.credibility}
@@ -511,7 +513,7 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-slate-400 mb-1">Relevance</label>
+                <label className="block text-xs font-medium mb-1" style={{color: "var(--iw-text-muted)"}}>Relevance</label>
                 <select
                   className="input-field"
                   value={newEvidence.relevance}
@@ -553,7 +555,7 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
           <div className="space-y-4">
             <div className="flex items-start gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
               <AlertTriangle size={18} className="text-red-400 flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-slate-300">
+              <p className="text-sm" style={{color: "var(--iw-text)"}}>
                 This will permanently remove this {confirmDelete.type} and all associated ratings.
                 This action cannot be undone.
               </p>
@@ -588,8 +590,8 @@ function Modal({
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
       <div className="relative card p-6 w-full max-w-md mx-4 shadow-2xl">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-slate-200">{title}</h3>
-          <button onClick={onClose} className="text-slate-500 hover:text-slate-300 transition-colors">
+          <h3 className="text-sm font-semibold" style={{color: "var(--iw-text)"}}>{title}</h3>
+          <button onClick={onClose} className="hover:text-slate-300 transition-colors" style={{color: "var(--iw-text-muted)"}}>
             <X size={16} />
           </button>
         </div>
