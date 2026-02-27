@@ -7,6 +7,8 @@ import { ACHPage } from './pages/ACHPage';
 import { BiasPage } from './pages/BiasPage';
 import { ExportPage } from './pages/ExportPage';
 import { DocsPage } from './pages/DocsPage';
+import { IOCPage } from './pages/IOCPage';
+import { DiamondPage } from './pages/DiamondPage';
 
 // Lazy-load variant layouts for code splitting
 const V1Layout = lazy(() => import('./variants/v1/Layout'));
@@ -44,6 +46,8 @@ function DefaultLayoutContent() {
           <Route path="ach" element={<ACHPage />} />
           <Route path="ach/:matrixId" element={<ACHPage />} />
           <Route path="bias" element={<BiasPage />} />
+          <Route path="ioc" element={<IOCPage />} />
+          <Route path="diamond" element={<DiamondPage />} />
           <Route path="export" element={<ExportPage />} />
           <Route path="docs" element={<DocsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />

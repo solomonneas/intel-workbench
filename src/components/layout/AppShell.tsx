@@ -4,6 +4,7 @@ import {
   Home,
   Grid3X3,
   Brain,
+  Crosshair,
   Diamond,
   Download,
   Shield,
@@ -54,11 +55,14 @@ export function AppShell({ children }: AppShellProps) {
       tourId: 'bias-nav',
     },
     {
-      to: '#',
+      to: `${basePath}/ioc`,
+      icon: <Crosshair size={18} />,
+      label: 'IOC Extractor',
+    },
+    {
+      to: `${basePath}/diamond`,
       icon: <Diamond size={18} />,
       label: 'Diamond Model',
-      disabled: true,
-      badge: 'Phase 3',
     },
     {
       to: `${basePath}/export`,
@@ -160,7 +164,7 @@ export function AppShell({ children }: AppShellProps) {
             className="text-xxs font-mono"
             style={{ color: 'var(--iw-text-muted)' }}
           >
-            v2.0.0 — Phase 2
+            v3.0.0 - Phase 3
           </p>
         </div>
       </aside>
