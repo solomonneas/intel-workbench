@@ -8,9 +8,9 @@ const RATING_WEIGHTS: Record<ConsistencyRating, number> = {
 };
 
 const CREDIBILITY_WEIGHTS: Record<string, number> = {
-  High: 3,
-  Medium: 2,
-  Low: 1,
+  High: 1.5,
+  Medium: 1.0,
+  Low: 0.5,
 };
 
 const RELEVANCE_WEIGHTS: Record<string, number> = {
@@ -26,7 +26,7 @@ const RELEVANCE_WEIGHTS: Record<string, number> = {
  *   score += ratingWeight * credibilityWeight * relevanceWeight
  *
  * - ratingWeight: C = -1 (supports), I = +2 (contradicts), N = 0, NA = 0
- * - credibilityWeight: High = 3, Medium = 2, Low = 1
+ * - credibilityWeight: High = 1.5, Medium = 1.0, Low = 0.5
  * - relevanceWeight: High = 1.5, Medium = 1.0, Low = 0.5
  *
  * Lower score = more supported hypothesis (less inconsistency).
