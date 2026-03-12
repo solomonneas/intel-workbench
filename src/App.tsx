@@ -2,15 +2,8 @@ import { lazy, Suspense } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { AppShell } from './components/layout/AppShell';
 import { ThemeProvider, ThemeModeProvider, useThemeMode } from './contexts/ThemeContext';
-import { HomePage } from './pages/HomePage';
-import { ACHPage } from './pages/ACHPage';
-import { BiasPage } from './pages/BiasPage';
-import { ExportPage } from './pages/ExportPage';
-import { DocsPage } from './pages/DocsPage';
-import { IOCPage } from './pages/IOCPage';
-import { DiamondPage } from './pages/DiamondPage';
+import { APP_ROUTES } from './routes';
 
-// Lazy-load variant layouts for code splitting
 const V1Layout = lazy(() => import('./variants/v1/Layout'));
 const V2Layout = lazy(() => import('./variants/v2/Layout'));
 const V3Layout = lazy(() => import('./variants/v3/Layout'));
@@ -36,22 +29,28 @@ function LoadingFallback() {
   );
 }
 
+function AppRoutes() {
+  return (
+    <Routes>
+      {APP_ROUTES.map((route) => (
+        <Route
+          key={route.id}
+          index={route.index}
+          path={route.path}
+          element={route.element}
+        />
+      ))}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+}
+
 function DefaultLayoutContent() {
   const { theme } = useThemeMode();
   return (
     <ThemeProvider theme={theme}>
       <AppShell>
-        <Routes>
-          <Route index element={<HomePage />} />
-          <Route path="ach" element={<ACHPage />} />
-          <Route path="ach/:matrixId" element={<ACHPage />} />
-          <Route path="bias" element={<BiasPage />} />
-          <Route path="ioc" element={<IOCPage />} />
-          <Route path="diamond" element={<DiamondPage />} />
-          <Route path="export" element={<ExportPage />} />
-          <Route path="docs" element={<DocsPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <AppRoutes />
       </AppShell>
     </ThemeProvider>
   );
@@ -69,14 +68,11 @@ function App() {
   return (
     <Suspense fallback={<LoadingFallback />}>
       <Routes>
-        {/* Themed variants */}
         <Route path="/v1/*" element={<V1Layout />} />
         <Route path="/v2/*" element={<V2Layout />} />
         <Route path="/v3/*" element={<V3Layout />} />
         <Route path="/v4/*" element={<V4Layout />} />
         <Route path="/v5/*" element={<V5Layout />} />
-
-        {/* Default layout at root */}
         <Route path="/*" element={<DefaultLayout />} />
       </Routes>
     </Suspense>
