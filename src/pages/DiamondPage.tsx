@@ -37,10 +37,10 @@ export function DiamondPage() {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (!file) return;
       const text = await file.text();
-      const ok = importEvents(text);
-      if (!ok) {
-        setImportError('Invalid JSON format. Expected an array of diamond events.');
-        setTimeout(() => setImportError(''), 3000);
+      const result = importEvents(text);
+      if (!result.ok) {
+        setImportError(result.reason ?? 'Import failed.');
+        setTimeout(() => setImportError(''), 4000);
       }
     };
     input.click();
@@ -48,7 +48,6 @@ export function DiamondPage() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Diamond size={20} style={{ color: 'var(--iw-accent)' }} />
@@ -93,7 +92,6 @@ export function DiamondPage() {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Event list sidebar */}
         <div className="lg:col-span-1">
           <EventList />
           {events.length === 0 && (
@@ -109,11 +107,9 @@ export function DiamondPage() {
           )}
         </div>
 
-        {/* Main content area */}
         <div className="lg:col-span-3 space-y-6">
           {activeEvent ? (
             <>
-              {/* Diamond visualization */}
               <div className="card p-6">
                 <DiamondVisualization
                   event={activeEvent}
@@ -122,7 +118,6 @@ export function DiamondPage() {
                 />
               </div>
 
-              {/* Vertex editor (shown when a vertex is selected) */}
               {activeVertex && (
                 <VertexEditor
                   event={activeEvent}
@@ -131,7 +126,6 @@ export function DiamondPage() {
                 />
               )}
 
-              {/* Meta-features panel */}
               <MetaFeaturesPanel event={activeEvent} />
             </>
           ) : (

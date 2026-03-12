@@ -1,6 +1,7 @@
-import { Copy, Check } from 'lucide-react';
+import { Copy, Check, AlertTriangle } from 'lucide-react';
 import { useState } from 'react';
 import { useIOCStore, getIOCTypeLabel, formatIOC, type IOCType } from '../../store/useIOCStore';
+import { copyText } from '../../utils/clipboard';
 
 const TYPE_COLORS: Record<IOCType, string> = {
   ipv4: '#06b6d4',
@@ -20,12 +21,24 @@ export function IOCResultsPanel() {
   const duplicatesRemoved = useIOCStore((s) => s.duplicatesRemoved);
   const toggleSelect = useIOCStore((s) => s.toggleSelect);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [copyError, setCopyError] = useState('');
 
   const handleCopyOne = async (value: string, type: IOCType, index: number) => {
-    const formatted = formatIOC(value, type, defanged);
-    await navigator.clipboard.writeText(formatted);
-    setCopiedIndex(index);
-    setTimeout(() => setCopiedIndex(null), 1500);
+    try {
+      const formatted = formatIOC(value, type, defanged);
+      const copied = await copyText(formatted);
+      if (!copied) {
+        throw new Error('Clipboard copy failed');
+      }
+      setCopyError('');
+      setCopiedIndex(index);
+      setTimeout(() => setCopiedIndex(null), 1500);
+    } catch {
+      const message = 'Unable to copy that IOC to the clipboard.';
+      setCopyError(message);
+      window.alert(message);
+      setTimeout(() => setCopyError(''), 4000);
+    }
   };
 
   if (iocs.length === 0) {
@@ -38,7 +51,6 @@ export function IOCResultsPanel() {
     );
   }
 
-  // Group by type
   const grouped = iocs.reduce<Record<IOCType, { value: string; selected: boolean; originalIndex: number }[]>>(
     (acc, ioc, idx) => {
       if (!acc[ioc.type]) acc[ioc.type] = [];
@@ -62,6 +74,13 @@ export function IOCResultsPanel() {
           </span>
         )}
       </div>
+
+      {copyError && (
+        <div className="flex items-center gap-2 text-xs text-red-400">
+          <AlertTriangle size={14} />
+          <span>{copyError}</span>
+        </div>
+      )}
 
       {typeOrder.map((type) => {
         const items = grouped[type];

@@ -1,5 +1,7 @@
 export type ConsistencyRating = 'C' | 'I' | 'N' | 'NA';
 
+export type ConfidenceLevel = 'Low' | 'Moderate' | 'High';
+
 export interface Evidence {
   id: string;
   description: string;
@@ -12,6 +14,8 @@ export interface Hypothesis {
   id: string;
   name: string;
   description: string;
+  confidence?: ConfidenceLevel;
+  confidenceJustification?: string;
 }
 
 export interface ACHMatrix {

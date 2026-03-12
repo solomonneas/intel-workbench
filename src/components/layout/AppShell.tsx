@@ -1,34 +1,14 @@
 import { type ReactNode } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import {
-  Home,
-  Grid3X3,
-  Brain,
-  Crosshair,
-  Diamond,
-  Download,
-  Shield,
-  ChevronRight,
-  BookOpen,
-  Sun,
-  Moon,
-} from 'lucide-react';
+import { Shield, ChevronRight, Sun, Moon } from 'lucide-react';
 import { useProjectStore } from '../../store/useProjectStore';
 import { useBasePath } from '../../utils/useBasePath';
 import { GuidedTour, TakeTourButton } from '../GuidedTour';
 import { useThemeMode } from '../../contexts/ThemeContext';
+import { getNavRoutes } from '../../routes';
 
 interface AppShellProps {
   children: ReactNode;
-}
-
-interface NavItem {
-  to: string;
-  icon: ReactNode;
-  label: string;
-  disabled?: boolean;
-  badge?: string;
-  tourId?: string;
 }
 
 export function AppShell({ children }: AppShellProps) {
@@ -36,54 +16,12 @@ export function AppShell({ children }: AppShellProps) {
   const location = useLocation();
   const basePath = useBasePath();
   const { mode, toggleMode } = useThemeMode();
-
-  const navItems: NavItem[] = [
-    {
-      to: `${basePath}/`,
-      icon: <Home size={18} />,
-      label: 'Projects',
-    },
-    {
-      to: `${basePath}/ach`,
-      icon: <Grid3X3 size={18} />,
-      label: 'ACH Matrix',
-    },
-    {
-      to: `${basePath}/bias`,
-      icon: <Brain size={18} />,
-      label: 'Bias Checklist',
-      tourId: 'bias-nav',
-    },
-    {
-      to: `${basePath}/ioc`,
-      icon: <Crosshair size={18} />,
-      label: 'IOC Extractor',
-    },
-    {
-      to: `${basePath}/diamond`,
-      icon: <Diamond size={18} />,
-      label: 'Diamond Model',
-    },
-    {
-      to: `${basePath}/export`,
-      icon: <Download size={18} />,
-      label: 'Export',
-      tourId: 'export-nav',
-    },
-    {
-      to: `${basePath}/docs`,
-      icon: <BookOpen size={18} />,
-      label: 'Docs',
-      tourId: 'docs-nav',
-    },
-  ];
+  const navItems = getNavRoutes('default', basePath);
 
   return (
     <div className="flex h-screen overflow-hidden transition-colors duration-200">
-      {/* Guided tour (auto-starts on first visit) */}
       <GuidedTour />
 
-      {/* Sidebar */}
       <aside
         className="w-64 flex-shrink-0 flex flex-col"
         style={{
@@ -91,7 +29,6 @@ export function AppShell({ children }: AppShellProps) {
           borderRight: '1px solid var(--iw-border)',
         }}
       >
-        {/* Logo */}
         <div
           className="h-14 flex items-center gap-3 px-4"
           style={{ borderBottom: '1px solid var(--iw-border)' }}
@@ -113,29 +50,9 @@ export function AppShell({ children }: AppShellProps) {
           </div>
         </div>
 
-        {/* Navigation */}
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
-            if (item.disabled) {
-              return (
-                <div key={item.label} className="sidebar-link-disabled">
-                  {item.icon}
-                  <span>{item.label}</span>
-                  {item.badge && (
-                    <span
-                      className="ml-auto text-xxs px-1.5 py-0.5 rounded font-mono"
-                      style={{
-                        backgroundColor: 'color-mix(in srgb, var(--iw-text-muted) 20%, var(--iw-bg))',
-                        color: 'var(--iw-text-muted)',
-                      }}
-                    >
-                      {item.badge}
-                    </span>
-                  )}
-                </div>
-              );
-            }
-
+            const Icon = item.icon;
             const isHome = item.to === `${basePath}/`;
             const isActive = isHome
               ? location.pathname === `${basePath}` || location.pathname === `${basePath}/`
@@ -143,19 +60,24 @@ export function AppShell({ children }: AppShellProps) {
 
             return (
               <NavLink
-                key={item.to}
+                key={item.id}
                 to={item.to}
                 className={isActive ? 'sidebar-link-active' : 'sidebar-link-inactive'}
-                {...(item.tourId ? { 'data-tour': item.tourId } : {})}
+                {...(item.tourId
+                  ? { 'data-tour': item.tourId }
+                  : item.id === 'ioc'
+                    ? { 'data-tour': 'ioc-nav' }
+                    : item.id === 'diamond'
+                      ? { 'data-tour': 'diamond-nav' }
+                      : {})}
               >
-                {item.icon}
+                <Icon size={18} />
                 <span>{item.label}</span>
               </NavLink>
             );
           })}
         </nav>
 
-        {/* Footer */}
         <div
           className="px-4 py-3"
           style={{ borderTop: '1px solid var(--iw-border)' }}
@@ -169,9 +91,7 @@ export function AppShell({ children }: AppShellProps) {
         </div>
       </aside>
 
-      {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top bar */}
         <header
           className="h-14 flex items-center justify-between px-6 backdrop-blur-sm flex-shrink-0"
           style={{
@@ -209,14 +129,12 @@ export function AppShell({ children }: AppShellProps) {
                 className="text-xxs font-mono"
                 style={{ color: 'var(--iw-text-muted)' }}
               >
-                {activeProject.achMatrices.length} matrices •{' '}
-                {activeProject.biasChecklists.length} checklists
+                {activeProject.achMatrices.length} matrices • {activeProject.biasChecklists.length} checklists
               </span>
             )}
           </div>
         </header>
 
-        {/* Content */}
         <main className="flex-1 overflow-y-auto p-6">
           {children}
         </main>

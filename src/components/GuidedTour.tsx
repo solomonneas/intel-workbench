@@ -1,53 +1,11 @@
 import { useEffect, useCallback } from 'react';
+import { driver, type Config, type DriveStep, type Driver } from 'driver.js';
+import 'driver.js/dist/driver.css';
 import { useTheme } from '../contexts/ThemeContext';
-
-/** Minimal type declarations for the driver.js global loaded via CDN */
-interface DriverStep {
-  element?: string;
-  popover: {
-    title: string;
-    description: string;
-    side?: 'top' | 'bottom' | 'left' | 'right';
-    align?: 'start' | 'center' | 'end';
-  };
-}
-
-interface DriverConfig {
-  showProgress?: boolean;
-  animate?: boolean;
-  overlayColor?: string;
-  overlayOpacity?: number;
-  stagePadding?: number;
-  stageRadius?: number;
-  popoverClass?: string;
-  steps?: DriverStep[];
-  onDestroyStarted?: () => void;
-  onDestroyed?: () => void;
-}
-
-interface DriverInstance {
-  drive: () => void;
-  destroy: () => void;
-  isActive: () => boolean;
-}
-
-interface DriverConstructor {
-  new (config: DriverConfig): DriverInstance;
-}
-
-declare global {
-  interface Window {
-    driver?: {
-      js?: {
-        driver: DriverConstructor;
-      };
-    };
-  }
-}
 
 const TOUR_STORAGE_KEY = 'intel-workbench-tour-complete';
 
-const TOUR_STEPS: DriverStep[] = [
+const TOUR_STEPS: DriveStep[] = [
   {
     popover: {
       title: '🛡️ Welcome to Solomon\'s Intel Workbench',
@@ -62,7 +20,7 @@ const TOUR_STEPS: DriverStep[] = [
     popover: {
       title: 'Hypothesis Columns',
       description:
-        'Each column represents a competing hypothesis. Add as many as you need — the matrix will score them against all evidence.',
+        'Each column represents a competing hypothesis. Add as many as you need. The matrix will score them against all evidence.',
       side: 'bottom',
       align: 'center',
     },
@@ -108,6 +66,26 @@ const TOUR_STEPS: DriverStep[] = [
     },
   },
   {
+    element: '[data-tour="ioc-nav"]',
+    popover: {
+      title: 'IOC Extractor',
+      description:
+        'Extract indicators of compromise from raw text, defang them for safe sharing, and export curated results.',
+      side: 'right',
+      align: 'center',
+    },
+  },
+  {
+    element: '[data-tour="diamond-nav"]',
+    popover: {
+      title: 'Diamond Model',
+      description:
+        'Map intrusion activity across adversary, capability, infrastructure, and victim to structure campaign analysis.',
+      side: 'right',
+      align: 'center',
+    },
+  },
+  {
     element: '[data-tour="export-nav"]',
     popover: {
       title: 'Export & Import',
@@ -132,19 +110,43 @@ const TOUR_STEPS: DriverStep[] = [
     popover: {
       title: 'Theme Variants',
       description:
-        'Switch between 5 visual themes — Langley, Terminal, Analyst\'s Desk, Stratcom, and Cyber Noir. Same tools, different aesthetic.',
+        'Switch between 5 visual themes. Same tools, different aesthetic.',
       side: 'right',
       align: 'center',
     },
   },
 ];
 
-function getDriverClass(): DriverConstructor | null {
-  // driver.js loaded via CDN exposes window.driver.js.driver
-  if (window.driver?.js?.driver) {
-    return window.driver.js.driver;
-  }
-  return null;
+function createDriverInstance(themeBg: string, onComplete?: () => void): Driver {
+  let completed = false;
+
+  const completeOnce = () => {
+    if (completed) return;
+    completed = true;
+    localStorage.setItem(TOUR_STORAGE_KEY, 'true');
+    onComplete?.();
+  };
+
+  let driverInstance: Driver;
+  const config: Config = {
+    showProgress: true,
+    animate: true,
+    overlayColor: themeBg,
+    overlayOpacity: 0.75,
+    stagePadding: 8,
+    stageRadius: 8,
+    popoverClass: 'intel-tour-popover',
+    steps: TOUR_STEPS,
+    onDestroyStarted: () => {
+      driverInstance.destroy();
+    },
+    onDestroyed: () => {
+      completeOnce();
+    },
+  };
+
+  driverInstance = driver(config);
+  return driverInstance;
 }
 
 interface GuidedTourProps {
@@ -158,39 +160,13 @@ export function GuidedTour({ forceStart = false, onComplete }: GuidedTourProps) 
   const theme = useTheme();
 
   const startTour = useCallback(() => {
-    const Driver = getDriverClass();
-    if (!Driver) {
-      console.warn('driver.js not loaded — tour skipped');
-      return;
-    }
+    const driverInstance = createDriverInstance(theme.bg, onComplete);
 
-    const driverInstance = new Driver({
-      showProgress: true,
-      animate: true,
-      overlayColor: theme.bg,
-      overlayOpacity: 0.75,
-      stagePadding: 8,
-      stageRadius: 8,
-      popoverClass: 'intel-tour-popover',
-      steps: TOUR_STEPS,
-      onDestroyStarted: () => {
-        localStorage.setItem(TOUR_STORAGE_KEY, 'true');
-        driverInstance.destroy();
-        onComplete?.();
-      },
-      onDestroyed: () => {
-        localStorage.setItem(TOUR_STORAGE_KEY, 'true');
-        onComplete?.();
-      },
-    });
-
-    // Short delay to let the DOM settle
     requestAnimationFrame(() => {
       driverInstance.drive();
     });
   }, [theme.bg, onComplete]);
 
-  // Auto-start on first visit
   useEffect(() => {
     if (forceStart) {
       startTour();
@@ -199,7 +175,6 @@ export function GuidedTour({ forceStart = false, onComplete }: GuidedTourProps) 
 
     const completed = localStorage.getItem(TOUR_STORAGE_KEY);
     if (!completed) {
-      // Delay auto-start to let the page render
       const timer = setTimeout(startTour, 800);
       return () => clearTimeout(timer);
     }
@@ -208,35 +183,11 @@ export function GuidedTour({ forceStart = false, onComplete }: GuidedTourProps) 
   return null;
 }
 
-/** Button component to manually trigger the tour */
 export function TakeTourButton() {
   const theme = useTheme();
 
   const handleClick = () => {
-    const Driver = getDriverClass();
-    if (!Driver) {
-      console.warn('driver.js not loaded — tour unavailable');
-      return;
-    }
-
-    const driverInstance = new Driver({
-      showProgress: true,
-      animate: true,
-      overlayColor: theme.bg,
-      overlayOpacity: 0.75,
-      stagePadding: 8,
-      stageRadius: 8,
-      popoverClass: 'intel-tour-popover',
-      steps: TOUR_STEPS,
-      onDestroyStarted: () => {
-        localStorage.setItem(TOUR_STORAGE_KEY, 'true');
-        driverInstance.destroy();
-      },
-      onDestroyed: () => {
-        localStorage.setItem(TOUR_STORAGE_KEY, 'true');
-      },
-    });
-
+    const driverInstance = createDriverInstance(theme.bg);
     driverInstance.drive();
   };
 

@@ -1,13 +1,9 @@
 import { Routes, Route, NavLink, useLocation, useNavigate } from 'react-router-dom';
-import { Home, Grid3X3, Brain, Download, Shield, ArrowLeft, BookOpen } from 'lucide-react';
+import { Shield, ArrowLeft } from 'lucide-react';
 import { ThemeProvider, type ThemeColors } from '../../contexts/ThemeContext';
 import { useProjectStore } from '../../store/useProjectStore';
-import { HomePage } from '../../pages/HomePage';
-import { ACHPage } from '../../pages/ACHPage';
-import { BiasPage } from '../../pages/BiasPage';
-import { ExportPage } from '../../pages/ExportPage';
-import { DocsPage } from '../../pages/DocsPage';
 import { GuidedTour, TakeTourButton } from '../../components/GuidedTour';
+import { APP_ROUTES, getNavRoutes } from '../../routes';
 
 const THEME: ThemeColors = {
   bg: '#fafaf9',
@@ -21,18 +17,11 @@ const THEME: ThemeColors = {
   variantName: 'analyst-desk',
 };
 
-const navItems = [
-  { to: '', icon: Home, label: 'Projects' },
-  { to: 'ach', icon: Grid3X3, label: 'ACH Matrix' },
-  { to: 'bias', icon: Brain, label: 'Bias Checklist', tourId: 'bias-nav' },
-  { to: 'export', icon: Download, label: 'Export', tourId: 'export-nav' },
-  { to: 'docs', icon: BookOpen, label: 'Docs', tourId: 'docs-nav' },
-];
-
 export default function AnalystDeskLayout() {
   const activeProject = useProjectStore((s) => s.getActiveProject());
   const location = useLocation();
   const navigate = useNavigate();
+  const navItems = getNavRoutes('v3', '/v3');
 
   return (
     <ThemeProvider theme={THEME}>
@@ -82,10 +71,8 @@ export default function AnalystDeskLayout() {
           fontFamily: THEME.fontBody,
         }}
       >
-        {/* Guided tour */}
         <GuidedTour />
 
-        {/* Top navigation bar */}
         <header
           className="flex items-center px-6 h-14 flex-shrink-0"
           style={{
@@ -93,7 +80,6 @@ export default function AnalystDeskLayout() {
             borderBottom: `1px solid ${THEME.border}`,
           }}
         >
-          {/* Logo */}
           <div className="flex items-center gap-2 mr-8">
             <Shield size={20} style={{ color: THEME.accent }} />
             <span className="text-sm font-semibold" style={{ color: THEME.text }}>
@@ -101,26 +87,30 @@ export default function AnalystDeskLayout() {
             </span>
           </div>
 
-          {/* Nav tabs */}
           <nav className="flex items-center gap-1 h-full">
             {navItems.map((item) => {
               const Icon = item.icon;
-              const fullPath = `/v3/${item.to}`;
               const isActive =
-                item.to === ''
+                item.id === 'home'
                   ? location.pathname === '/v3' || location.pathname === '/v3/'
-                  : location.pathname.startsWith(fullPath);
+                  : location.pathname.startsWith(item.to);
 
               return (
                 <NavLink
-                  key={item.to}
-                  to={fullPath}
+                  key={item.id}
+                  to={item.to}
                   className="flex items-center gap-2 px-3 h-full text-sm font-medium transition-all duration-150"
                   style={{
                     color: isActive ? THEME.accent : THEME.textMuted,
                     borderBottom: isActive ? `2px solid ${THEME.accent}` : '2px solid transparent',
                   }}
-                  {...(item.tourId ? { 'data-tour': item.tourId } : {})}
+                  {...(item.tourId
+                    ? { 'data-tour': item.tourId }
+                    : item.id === 'ioc'
+                      ? { 'data-tour': 'ioc-nav' }
+                      : item.id === 'diamond'
+                        ? { 'data-tour': 'diamond-nav' }
+                        : {})}
                 >
                   <Icon size={16} />
                   <span>{item.label}</span>
@@ -129,7 +119,6 @@ export default function AnalystDeskLayout() {
             })}
           </nav>
 
-          {/* Right side */}
           <div className="ml-auto flex items-center gap-4">
             <TakeTourButton />
             {activeProject && (
@@ -149,16 +138,12 @@ export default function AnalystDeskLayout() {
           </div>
         </header>
 
-        {/* Content */}
         <main className="flex-1 overflow-y-auto p-8">
           <div className="max-w-5xl mx-auto">
             <Routes>
-              <Route index element={<HomePage />} />
-              <Route path="ach" element={<ACHPage />} />
-              <Route path="ach/:matrixId" element={<ACHPage />} />
-              <Route path="bias" element={<BiasPage />} />
-              <Route path="export" element={<ExportPage />} />
-              <Route path="docs" element={<DocsPage />} />
+              {APP_ROUTES.map((route) => (
+                <Route key={route.id} index={route.index} path={route.path} element={route.element} />
+              ))}
             </Routes>
           </div>
         </main>

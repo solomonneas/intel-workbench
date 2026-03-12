@@ -28,9 +28,9 @@ export function ExportPage() {
     return (
       <div className="flex items-center justify-center h-full">
         <div className="text-center">
-          <Download size={48} className="mx-auto mb-4" style={{color: "var(--iw-text-muted)"}} />
-          <h2 className="text-lg font-medium mb-2" style={{color: "var(--iw-text)"}}>No Project Selected</h2>
-          <p className="text-sm mb-4" style={{color: "var(--iw-text-muted)"}}>
+          <Download size={48} className="mx-auto mb-4" style={{ color: 'var(--iw-text-muted)' }} />
+          <h2 className="text-lg font-medium mb-2" style={{ color: 'var(--iw-text)' }}>No Project Selected</h2>
+          <p className="text-sm mb-4" style={{ color: 'var(--iw-text-muted)' }}>
             Select a project to export its data.
           </p>
           <button onClick={() => navigate(`${basePath}/`)} className="btn-primary">
@@ -45,7 +45,6 @@ export function ExportPage() {
     return store.exportProject(project.id) ?? '{}';
   };
 
-  /** Escape a value for use inside a markdown table cell. */
   const escapeCell = (value: string): string =>
     value.replace(/\|/g, '\\|').replace(/\r?\n/g, ' ').trim();
 
@@ -68,12 +67,10 @@ export function ExportPage() {
       const scores = calculateAllScores(matrix);
       const preferredId = findPreferredHypothesis(matrix);
 
-      // Table header
       const hNames = matrix.hypotheses.map((h) => escapeCell(h.name));
       lines.push(`| Evidence | Source | Cred. | ${hNames.join(' | ')} |`);
       lines.push(`| --- | --- | --- | ${hNames.map(() => '---').join(' | ')} |`);
 
-      // Table rows
       for (const e of matrix.evidence) {
         const ratings = matrix.hypotheses.map((h) => {
           const r = matrix.ratings[e.id]?.[h.id] ?? 'NA';
@@ -86,23 +83,23 @@ export function ExportPage() {
       }
       lines.push('');
 
-      // Scores
-      lines.push('### Inconsistency Scores');
+      lines.push('### Inconsistency Scores & Confidence');
       lines.push('');
       for (const h of matrix.hypotheses) {
         const score = scores[h.id] ?? 0;
         const marker = h.id === preferredId ? ' ⭐ **PREFERRED**' : '';
+        const confidenceStr = h.confidence ? `**Confidence:** ${h.confidence}` : '**Confidence:** Unassessed';
+        const justificationStr = h.confidenceJustification ? ` — ${h.confidenceJustification}` : '';
         lines.push(`- **${escapeCell(h.name)}:** ${score}${marker}`);
+        lines.push(`  - ${confidenceStr}${justificationStr}`);
       }
       lines.push('');
 
-      // Legend
       lines.push('*Legend: C = Consistent, I = Inconsistent, N = Neutral, NA = Not Applicable*');
       lines.push('*Scoring: I = +2, N = 0, C = -1 (weighted by credibility × relevance)*');
       lines.push('');
     }
 
-    // Bias checklists
     for (const checklist of project.biasChecklists) {
       lines.push(`## Bias Checklist: ${escapeCell(checklist.name)}`);
       lines.push('');
@@ -138,7 +135,7 @@ export function ExportPage() {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      setCopyError('Failed to copy — try selecting the text above and copying manually.');
+      setCopyError('Failed to copy. Try selecting the text above and copying manually.');
       setTimeout(() => setCopyError(''), 5000);
     }
   };
@@ -159,34 +156,35 @@ export function ExportPage() {
   const handleImport = () => {
     setImportError('');
     setImportSuccess(false);
+
     if (!importText.trim()) {
       setImportError('Please paste a JSON project export.');
       return;
     }
-    const success = store.importProject(importText);
-    if (success) {
+
+    const result = store.importProject(importText);
+    if (result.ok) {
       setImportSuccess(true);
       setImportText('');
       setTimeout(() => setImportSuccess(false), 3000);
-    } else {
-      setImportError('Invalid JSON or missing required fields (id, name).');
+      return;
     }
+
+    setImportError(result.reason ?? 'Import failed.');
   };
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
       <div>
-        <h2 className="text-lg font-semibold mb-1" style={{color: "var(--iw-text)"}}>Export & Import</h2>
-        <p className="text-sm" style={{color: "var(--iw-text-muted)"}}>
+        <h2 className="text-lg font-semibold mb-1" style={{ color: 'var(--iw-text)' }}>Export & Import</h2>
+        <p className="text-sm" style={{ color: 'var(--iw-text-muted)' }}>
           Export your analysis as JSON (for backup/sharing) or Markdown (for reports).
         </p>
       </div>
 
-      {/* Export */}
       <div className="card p-6 space-y-4">
-        <h3 className="text-sm font-semibold" style={{color: "var(--iw-text)"}}>Export Project</h3>
+        <h3 className="text-sm font-semibold" style={{ color: 'var(--iw-text)' }}>Export Project</h3>
 
-        {/* Format selector */}
         <div className="flex gap-2">
           <button
             onClick={() => setExportFormat('json')}
@@ -214,14 +212,12 @@ export function ExportPage() {
           </button>
         </div>
 
-        {/* Preview */}
         <div className="relative">
-          <pre className="border border-slate-700/50 rounded-lg p-4 text-xs font-mono overflow-x-auto max-h-96 overflow-y-auto whitespace-pre-wrap" style={{color: "var(--iw-text)", backgroundColor: "var(--iw-bg)"}}>
+          <pre className="border border-slate-700/50 rounded-lg p-4 text-xs font-mono overflow-x-auto max-h-96 overflow-y-auto whitespace-pre-wrap" style={{ color: 'var(--iw-text)', backgroundColor: 'var(--iw-bg)' }}>
             {getExportContent()}
           </pre>
         </div>
 
-        {/* Actions */}
         <div className="flex gap-2">
           <button onClick={handleCopy} className="btn-secondary text-xs">
             {copied ? (
@@ -246,17 +242,16 @@ export function ExportPage() {
         )}
       </div>
 
-      {/* Import */}
       <div className="card p-6 space-y-4">
-        <h3 className="text-sm font-semibold" style={{color: "var(--iw-text)"}}>Import Project</h3>
-        <p className="text-xs" style={{color: "var(--iw-text-muted)"}}>
+        <h3 className="text-sm font-semibold" style={{ color: 'var(--iw-text)' }}>Import Project</h3>
+        <p className="text-xs" style={{ color: 'var(--iw-text-muted)' }}>
           Paste a previously exported JSON project to import it. If a project with the same ID
           exists, it will be replaced.
         </p>
         <textarea
           className="input-field font-mono text-xs resize-none"
           rows={6}
-          placeholder='Paste JSON here...'
+          placeholder="Paste JSON here..."
           value={importText}
           onChange={(e) => setImportText(e.target.value)}
         />
