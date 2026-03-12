@@ -4,6 +4,11 @@ import type { Project, ACHMatrix, Evidence, Hypothesis, ConsistencyRating, BiasC
 import { generateId } from '../utils/id';
 import { sampleProject } from '../data/sampleProject';
 
+export interface ImportResult {
+  ok: boolean;
+  reason?: string;
+}
+
 interface ProjectStore {
   // State
   projects: Project[];
@@ -27,7 +32,7 @@ interface ProjectStore {
 
   // Hypothesis CRUD
   addHypothesis: (projectId: string, matrixId: string, name: string, description: string) => void;
-  updateHypothesis: (projectId: string, matrixId: string, hypothesisId: string, updates: Partial<Pick<Hypothesis, 'name' | 'description'>>) => void;
+  updateHypothesis: (projectId: string, matrixId: string, hypothesisId: string, updates: Partial<Pick<Hypothesis, 'name' | 'description' | 'confidence' | 'confidenceJustification'>>) => void;
   removeHypothesis: (projectId: string, matrixId: string, hypothesisId: string) => void;
 
   // Evidence CRUD
@@ -45,7 +50,7 @@ interface ProjectStore {
 
   // Import/Export
   exportProject: (id: string) => string | null;
-  importProject: (json: string) => boolean;
+  importProject: (json: string) => ImportResult;
 }
 
 /**
@@ -114,6 +119,8 @@ function normalizeMatrix(raw: unknown, fallbackTime: string): ACHMatrix | null {
         id: (rh as Hypothesis).id,
         name: (rh as Hypothesis).name,
         description: typeof (rh as Hypothesis).description === 'string' ? (rh as Hypothesis).description : '',
+        confidence: ['Low', 'Moderate', 'High'].includes((rh as Hypothesis).confidence as string) ? (rh as Hypothesis).confidence : undefined,
+        confidenceJustification: typeof (rh as Hypothesis).confidenceJustification === 'string' ? (rh as Hypothesis).confidenceJustification : undefined,
       });
     }
   }
@@ -559,24 +566,42 @@ export const useProjectStore = create<ProjectStore>()(
       },
 
       importProject: (json) => {
+        let raw: unknown;
+
         try {
-          const raw = JSON.parse(json);
-          const project = normalizeImportedProject(raw);
-          if (!project) return false;
-          set((state) => {
-            // Replace if exists, otherwise add
-            const exists = state.projects.some((p) => p.id === project.id);
-            return {
-              projects: exists
-                ? state.projects.map((p) => (p.id === project.id ? project : p))
-                : [...state.projects, project],
-              activeProjectId: project.id,
-            };
-          });
-          return true;
+          raw = JSON.parse(json);
         } catch {
-          return false;
+          return { ok: false, reason: 'JSON parse failure: invalid JSON.' };
         }
+
+        if (!raw || typeof raw !== 'object' || Array.isArray(raw)) {
+          return { ok: false, reason: 'Schema validation failure: expected a single project object.' };
+        }
+
+        const obj = raw as Record<string, unknown>;
+        const matrixCount = Array.isArray(obj.achMatrices) ? obj.achMatrices.length : 0;
+        const checklistCount = Array.isArray(obj.biasChecklists) ? obj.biasChecklists.length : 0;
+        if (matrixCount + checklistCount === 0) {
+          return { ok: false, reason: 'Empty data: project has no ACH matrices or bias checklists.' };
+        }
+
+        const project = normalizeImportedProject(raw);
+        if (!project) {
+          return { ok: false, reason: 'Schema validation failure: missing required project fields.' };
+        }
+
+        set((state) => {
+          // Replace if exists, otherwise add
+          const exists = state.projects.some((p) => p.id === project.id);
+          return {
+            projects: exists
+              ? state.projects.map((p) => (p.id === project.id ? project : p))
+              : [...state.projects, project],
+            activeProjectId: project.id,
+          };
+        });
+
+        return { ok: true };
       },
     }),
     {

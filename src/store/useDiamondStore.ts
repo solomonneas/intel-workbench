@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { generateId } from '../utils/id';
+import type { ImportResult } from './useProjectStore';
 
 export interface AdversaryVertex {
   name: string;
@@ -82,7 +83,7 @@ interface DiamondStore {
   updateMeta: (eventId: string, data: Partial<DiamondMeta>) => void;
 
   exportEvents: () => string;
-  importEvents: (json: string) => boolean;
+  importEvents: (json: string) => ImportResult;
 }
 
 function createEmptyAdversary(): AdversaryVertex {
@@ -108,6 +109,99 @@ function createEmptyMeta(): DiamondMeta {
     confidence: 'Possible',
     sourceReliability: 'C',
     notes: '',
+  };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return !!value && typeof value === 'object' && !Array.isArray(value);
+}
+
+function isNonEmptyString(value: unknown): value is string {
+  return typeof value === 'string' && value.trim().length > 0;
+}
+
+function hasOnlyStringFields(obj: unknown, fields: string[]): boolean {
+  if (!isRecord(obj)) return false;
+  return fields.every((field) => typeof obj[field] === 'string');
+}
+
+export function validateDiamondEvent(obj: unknown): DiamondEvent | null {
+  if (!isRecord(obj)) return null;
+
+  if (!isNonEmptyString(obj.id)) return null;
+  if (!isNonEmptyString(obj.name)) return null;
+  if (!isNonEmptyString(obj.createdAt)) return null;
+  if (!isNonEmptyString(obj.updatedAt)) return null;
+
+  if (!hasOnlyStringFields(obj.adversary, ['name', 'aliases', 'motivation', 'attributionConfidence'])) {
+    return null;
+  }
+
+  if (!hasOnlyStringFields(obj.capability, ['malware', 'tools', 'techniques', 'attackIds'])) {
+    return null;
+  }
+
+  if (!hasOnlyStringFields(obj.infrastructure, ['c2Servers', 'domains', 'ips', 'hostingProviders'])) {
+    return null;
+  }
+
+  if (!hasOnlyStringFields(obj.victim, ['organization', 'sector', 'geography', 'impact'])) {
+    return null;
+  }
+
+  if (!isRecord(obj.meta)) return null;
+  if (typeof obj.meta.timestamp !== 'string' || typeof obj.meta.notes !== 'string') return null;
+
+  const adversary = obj.adversary as Record<string, unknown>;
+  const capability = obj.capability as Record<string, unknown>;
+  const infrastructure = obj.infrastructure as Record<string, unknown>;
+  const victim = obj.victim as Record<string, unknown>;
+  const meta = obj.meta as Record<string, unknown>;
+
+  const validPhases: KillChainPhase[] = ['recon', 'weaponization', 'delivery', 'exploitation', 'installation', 'c2', 'actions'];
+  const validConfidence: ConfidenceLevel[] = ['Confirmed', 'Probable', 'Possible', 'Doubtful'];
+  const validReliability: SourceReliability[] = ['A', 'B', 'C', 'D', 'E', 'F'];
+
+  if (!validPhases.includes(obj.meta.phase as KillChainPhase)) return null;
+  if (!validConfidence.includes(obj.meta.confidence as ConfidenceLevel)) return null;
+  if (!validReliability.includes(obj.meta.sourceReliability as SourceReliability)) return null;
+
+  return {
+    id: obj.id,
+    name: obj.name,
+    adversary: {
+      name: adversary.name as string,
+      aliases: adversary.aliases as string,
+      motivation: adversary.motivation as string,
+      attributionConfidence: adversary.attributionConfidence as string,
+    },
+    capability: {
+      malware: capability.malware as string,
+      tools: capability.tools as string,
+      techniques: capability.techniques as string,
+      attackIds: capability.attackIds as string,
+    },
+    infrastructure: {
+      c2Servers: infrastructure.c2Servers as string,
+      domains: infrastructure.domains as string,
+      ips: infrastructure.ips as string,
+      hostingProviders: infrastructure.hostingProviders as string,
+    },
+    victim: {
+      organization: victim.organization as string,
+      sector: victim.sector as string,
+      geography: victim.geography as string,
+      impact: victim.impact as string,
+    },
+    meta: {
+      timestamp: meta.timestamp as string,
+      phase: meta.phase as KillChainPhase,
+      confidence: meta.confidence as ConfidenceLevel,
+      sourceReliability: meta.sourceReliability as SourceReliability,
+      notes: meta.notes as string,
+    },
+    createdAt: obj.createdAt,
+    updatedAt: obj.updatedAt,
   };
 }
 
@@ -255,14 +349,33 @@ export const useDiamondStore = create<DiamondStore>()(
       },
 
       importEvents: (json: string) => {
+        let parsed: unknown;
+
         try {
-          const parsed = JSON.parse(json);
-          if (!Array.isArray(parsed)) return false;
-          set({ events: parsed, activeEventId: parsed[0]?.id ?? null });
-          return true;
+          parsed = JSON.parse(json);
         } catch {
-          return false;
+          return { ok: false, reason: 'JSON parse failure: invalid JSON.' };
         }
+
+        if (!Array.isArray(parsed)) {
+          return { ok: false, reason: 'Schema validation failure: expected an array of diamond events.' };
+        }
+
+        if (parsed.length === 0) {
+          return { ok: false, reason: 'Empty data: no diamond events found.' };
+        }
+
+        const validatedEvents: DiamondEvent[] = [];
+        for (const item of parsed) {
+          const validated = validateDiamondEvent(item);
+          if (!validated) {
+            return { ok: false, reason: 'Schema validation failure: one or more diamond events are missing required fields.' };
+          }
+          validatedEvents.push(validated);
+        }
+
+        set({ events: validatedEvents, activeEventId: validatedEvents[0]?.id ?? null });
+        return { ok: true };
       },
     }),
     {
