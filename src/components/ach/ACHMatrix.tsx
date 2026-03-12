@@ -6,8 +6,9 @@ import {
   Trophy,
   X,
   Grid3X3,
+  Info,
 } from 'lucide-react';
-import type { ACHMatrix as ACHMatrixType, ConsistencyRating, Evidence, Hypothesis } from '../../types';
+import type { ACHMatrix as ACHMatrixType, ConsistencyRating, Evidence, Hypothesis, ConfidenceLevel } from '../../types';
 import { useProjectStore } from '../../store/useProjectStore';
 import {
   calculateAllScores,
@@ -37,6 +38,42 @@ const RATING_LABELS: Record<ConsistencyRating, string> = {
   NA: '—',
 };
 
+const CONFIDENCE_CYCLE: (ConfidenceLevel | undefined)[] = [undefined, 'Low', 'Moderate', 'High'];
+
+const CONFIDENCE_STYLES: Record<string, { bg: string; text: string; border: string; label: string }> = {
+  Low: { 
+    bg: 'bg-amber-500/20', 
+    text: 'text-amber-500', 
+    border: 'border-amber-500/30',
+    label: 'Low'
+  },
+  Moderate: { 
+    bg: 'bg-blue-500/20', 
+    text: 'text-blue-500', 
+    border: 'border-blue-500/30',
+    label: 'Moderate'
+  },
+  High: { 
+    bg: 'bg-green-500/20', 
+    text: 'text-green-500', 
+    border: 'border-green-500/30',
+    label: 'High'
+  },
+  Unassessed: { 
+    bg: 'bg-gray-500/20', 
+    text: 'text-gray-400', 
+    border: 'border-gray-500/30',
+    label: 'Unassessed'
+  },
+};
+
+// ICD 203 Definitions for tooltips
+const CONFIDENCE_DEFINITIONS: Record<string, string> = {
+  Low: '"Roughly even chance" or significant unknowns remain',
+  Moderate: 'Information is credibly sourced and plausible, but insufficient for higher confidence',
+  High: 'High-quality information from multiple independent sources with logical interpretation',
+};
+
 export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
   const store = useProjectStore();
   const [confirmDelete, setConfirmDelete] = useState<{
@@ -51,6 +88,8 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
     field: string;
   } | null>(null);
   const [editValue, setEditValue] = useState('');
+  const [expandedJustification, setExpandedJustification] = useState<string | null>(null);
+  const [showTooltip, setShowTooltip] = useState<string | null>(null);
 
   // New evidence form
   const [newEvidence, setNewEvidence] = useState<Omit<Evidence, 'id'>>({
@@ -84,6 +123,25 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
       store.setRating(projectId, matrix.id, evidenceId, hypothesisId, next);
     },
     [projectId, matrix.id, matrix.ratings, store]
+  );
+
+  const handleCycleConfidence = useCallback(
+    (hypothesisId: string) => {
+      const hypothesis = matrix.hypotheses.find((h) => h.id === hypothesisId);
+      const current = hypothesis?.confidence;
+      const currentIndex = CONFIDENCE_CYCLE.indexOf(current);
+      const nextIndex = (currentIndex + 1) % CONFIDENCE_CYCLE.length;
+      const next = CONFIDENCE_CYCLE[nextIndex];
+      store.updateHypothesis(projectId, matrix.id, hypothesisId, { confidence: next });
+    },
+    [projectId, matrix.id, matrix.hypotheses, store]
+  );
+
+  const handleUpdateJustification = useCallback(
+    (hypothesisId: string, justification: string) => {
+      store.updateHypothesis(projectId, matrix.id, hypothesisId, { confidenceJustification: justification });
+    },
+    [projectId, matrix.id, store]
   );
 
   const handleAddEvidence = () => {
@@ -121,7 +179,7 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
     if (editingCell.type === 'hypothesis') {
       store.updateHypothesis(projectId, matrix.id, editingCell.id, {
         [editingCell.field]: editValue,
-      } as Partial<Pick<Hypothesis, 'name' | 'description'>>);
+      } as Partial<Pick<Hypothesis, 'name' | 'description' | 'confidence' | 'confidenceJustification'>>);
     } else {
       store.updateEvidence(projectId, matrix.id, editingCell.id, {
         [editingCell.field]: editValue,
@@ -142,6 +200,10 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
       default:
         return 'badge-low';
     }
+  };
+
+  const getConfidenceStyle = (confidence: ConfidenceLevel | undefined) => {
+    return confidence ? CONFIDENCE_STYLES[confidence] : CONFIDENCE_STYLES.Unassessed;
   };
 
   if (matrix.hypotheses.length === 0 && matrix.evidence.length === 0) {
@@ -200,66 +262,142 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
                 Rel.
               </th>
               {/* Hypothesis columns */}
-              {matrix.hypotheses.map((h, hIdx) => (
-                <th
-                  key={h.id}
-                  className={`p-3 text-center border-b border-r border-slate-700/50 min-w-[140px] ${
-                    h.id === preferredId ? 'bg-intel-green/5' : ''
-                  }`}
-                  {...(hIdx === 0 ? { 'data-tour': 'hypothesis-columns' } : {})}
-                >
-                  <div className="flex flex-col items-center gap-1">
-                    <div className="flex items-center gap-1">
-                      {h.id === preferredId && (
-                        <Trophy size={12} className="text-intel-green" />
-                      )}
-                      {editingCell?.type === 'hypothesis' &&
-                      editingCell.id === h.id &&
-                      editingCell.field === 'name' ? (
-                        <input
-                          autoFocus
-                          className="input-field text-xs text-center w-full"
-                          value={editValue}
-                          onChange={(e) => setEditValue(e.target.value)}
-                          onBlur={commitEdit}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') commitEdit();
-                            if (e.key === 'Escape') setEditingCell(null);
-                          }}
-                        />
-                      ) : (
-                        <span
-                          className="text-xs font-semibold cursor-pointer hover:text-accent-400 transition-colors focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:outline-none rounded"
-                          style={{ color: "var(--iw-text)" }}
-                          onClick={() => startEditing('hypothesis', h.id, 'name', h.name)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              e.preventDefault();
-                              startEditing('hypothesis', h.id, 'name', h.name);
-                            }
-                          }}
-                          role="button"
-                          tabIndex={0}
-                          title="Click to edit"
-                          aria-label={`Edit hypothesis: ${h.name}`}
+              {matrix.hypotheses.map((h, hIdx) => {
+                const confidenceStyle = getConfidenceStyle(h.confidence);
+                const isJustificationExpanded = expandedJustification === h.id;
+                return (
+                  <th
+                    key={h.id}
+                    className={`p-3 text-center border-b border-r border-slate-700/50 min-w-[180px] ${
+                      h.id === preferredId ? 'bg-intel-green/5' : ''
+                    }`}
+                    {...(hIdx === 0 ? { 'data-tour': 'hypothesis-columns' } : {})}
+                  >
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="flex items-center gap-1">
+                        {h.id === preferredId && (
+                          <Trophy size={12} className="text-intel-green" />
+                        )}
+                        {editingCell?.type === 'hypothesis' &&
+                        editingCell.id === h.id &&
+                        editingCell.field === 'name' ? (
+                          <input
+                            autoFocus
+                            className="input-field text-xs text-center w-full"
+                            value={editValue}
+                            onChange={(e) => setEditValue(e.target.value)}
+                            onBlur={commitEdit}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') commitEdit();
+                              if (e.key === 'Escape') setEditingCell(null);
+                            }}
+                          />
+                        ) : (
+                          <span
+                            className="text-xs font-semibold cursor-pointer hover:text-accent-400 transition-colors focus-visible:ring-2 focus-visible:ring-cyan-500 focus-visible:outline-none rounded"
+                            style={{ color: "var(--iw-text)" }}
+                            onClick={() => startEditing('hypothesis', h.id, 'name', h.name)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                startEditing('hypothesis', h.id, 'name', h.name);
+                              }
+                            }}
+                            role="button"
+                            tabIndex={0}
+                            title="Click to edit"
+                            aria-label={`Edit hypothesis: ${h.name}`}
+                          >
+                            {h.name}
+                          </span>
+                        )}
+                      </div>
+                      
+                      {/* Confidence Badge */}
+                      <div className="relative">
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => handleCycleConfidence(h.id)}
+                            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xxs font-medium border transition-all hover:opacity-80 ${confidenceStyle.bg} ${confidenceStyle.text} ${confidenceStyle.border}`}
+                            title="Click to cycle confidence level"
+                          >
+                            {confidenceStyle.label}
+                          </button>
+                          <div className="relative">
+                            <button
+                              onMouseEnter={() => setShowTooltip(h.id)}
+                              onMouseLeave={() => setShowTooltip(null)}
+                              className="p-0.5 hover:opacity-80 transition-opacity"
+                              style={{ color: "var(--iw-text-muted)" }}
+                              aria-label="ICD 203 Confidence Level Definitions"
+                            >
+                              <Info size={12} />
+                            </button>
+                            {showTooltip === h.id && (
+                              <div className="absolute left-full ml-2 top-0 z-50 w-64 p-3 rounded-lg shadow-xl border text-xs"
+                                style={{ 
+                                  backgroundColor: "var(--iw-surface)", 
+                                  borderColor: "var(--iw-border)",
+                                  color: "var(--iw-text)"
+                                }}
+                              >
+                                <div className="font-semibold mb-2">ICD 203 Confidence Levels</div>
+                                <div className="space-y-1.5">
+                                  <div>
+                                    <span className="font-medium text-amber-500">Low:</span>{' '}
+                                    <span style={{ color: "var(--iw-text-muted)" }}>{CONFIDENCE_DEFINITIONS.Low}</span>
+                                  </div>
+                                  <div>
+                                    <span className="font-medium text-blue-500">Moderate:</span>{' '}
+                                    <span style={{ color: "var(--iw-text-muted)" }}>{CONFIDENCE_DEFINITIONS.Moderate}</span>
+                                  </div>
+                                  <div>
+                                    <span className="font-medium text-green-500">High:</span>{' '}
+                                    <span style={{ color: "var(--iw-text-muted)" }}>{CONFIDENCE_DEFINITIONS.High}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Confidence Justification */}
+                      <div className="w-full">
+                        <button
+                          onClick={() => setExpandedJustification(isJustificationExpanded ? null : h.id)}
+                          className="text-xxs font-mono hover:underline"
+                          style={{ color: "var(--iw-text-muted)" }}
                         >
-                          {h.name}
-                        </span>
-                      )}
+                          {isJustificationExpanded ? 'Hide justification' : (h.confidenceJustification ? 'Edit justification' : 'Add justification')}
+                        </button>
+                        {isJustificationExpanded && (
+                          <textarea
+                            className="input-field text-xs w-full mt-1 resize-none"
+                            rows={2}
+                            placeholder="Explain your confidence assessment..."
+                            value={h.confidenceJustification || ''}
+                            onChange={(e) => handleUpdateJustification(h.id, e.target.value)}
+                            onBlur={() => setExpandedJustification(null)}
+                            autoFocus
+                          />
+                        )}
+                      </div>
+
+                      <span className="text-xxs font-mono" style={{color: "var(--iw-text-muted)"}}>
+                        Score: {scores[h.id] ?? 0}
+                      </span>
+                      <button
+                        onClick={() => setConfirmDelete({ type: 'hypothesis', id: h.id })}
+                        className="hover:text-red-400 transition-colors p-0.5" style={{ color: "var(--iw-text-muted)" }}
+                        title="Delete hypothesis"
+                      >
+                        <Trash2 size={12} />
+                      </button>
                     </div>
-                    <span className="text-xxs font-mono" style={{color: "var(--iw-text-muted)"}}>
-                      Score: {scores[h.id] ?? 0}
-                    </span>
-                    <button
-                      onClick={() => setConfirmDelete({ type: 'hypothesis', id: h.id })}
-                      className="hover:text-red-400 transition-colors p-0.5" style={{ color: "var(--iw-text-muted)" }}
-                      title="Delete hypothesis"
-                    >
-                      <Trash2 size={12} />
-                    </button>
-                  </div>
-                </th>
-              ))}
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           <tbody>
@@ -387,6 +525,7 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
                       score={normalizedScores[h.id] ?? 50}
                       rawScore={scores[h.id] ?? 0}
                       isPreferred={h.id === preferredId}
+                      confidence={h.confidence}
                     />
                   </td>
                 ))}
