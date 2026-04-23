@@ -12,3 +12,8 @@ POLISH_NOTES.md
 FRONTEND_DESIGN.md
 ROADMAP.md
 PHASE4_SPEC.md
+
+# Claude Code session files (never commit)
+.claude/
+.codex/
+.learnings/
