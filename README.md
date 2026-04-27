@@ -27,6 +27,7 @@ Intel Workbench is an interactive Analysis of Competing Hypotheses (ACH) tool th
 - **MITRE ATT&CK Tagging** : Tag evidence and hypotheses with techniques from the Enterprise ATT&CK matrix (691 techniques, 14 tactics). Searchable by ID, name, or tactic. Vendored locally so the workbench stays offline-first
 - **Cognitive Bias Checklist** : Heuer & Pherson taxonomy with 12 biases across Cognitive, Analytical, and Social categories; track mitigation notes per bias
 - **Score Visualization** : Real-time normalized score bars showing hypothesis support levels with color-coded confidence indicators
+- **ICD 203 Estimative Language** : Pick a likelihood band ("almost no chance" through "almost certainly") with the canonical 1-5%/5-20%/.../95-99% ranges per ODNI Analytic Standards; the preferred hypothesis displays a probability ribbon on the matrix and in Markdown exports
 - **Evidence Weighting** : Credibility and relevance ratings (High/Medium/Low) that feed into weighted inconsistency scores
 - **Export & Import** : Full JSON export/import for backup and sharing; Markdown export for report generation (includes ATT&CK technique IDs)
 - **5 Visual Themes** : Langley (classified intel), Terminal (hacker/OSINT), Analyst's Desk (clean professional), Stratcom (military command), Cyber Noir (cyberpunk)
