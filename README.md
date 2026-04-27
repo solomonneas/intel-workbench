@@ -1,4 +1,6 @@
 <p align="center">
+  <a href="https://intel-workbench.vercel.app"><img src="https://img.shields.io/badge/Live_Demo-intel--workbench.vercel.app-22c55e?style=flat-square&logo=vercel&logoColor=white" alt="Live Demo" /></a>
+  <img src="https://github.com/solomonneas/intel-workbench/actions/workflows/ci.yml/badge.svg" alt="CI" />
   <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=white" alt="React" />
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
@@ -11,19 +13,22 @@
 
 **Structured analytic techniques for cyber threat intelligence. Built for the modern analyst.**
 
-Intel Workbench is an interactive Analysis of Competing Hypotheses (ACH) tool that brings rigorous intelligence methodology to the browser. Score evidence against hypotheses, identify cognitive biases, and export structured assessments. Zero backend, full offline capability, and five distinct visual themes.
+Intel Workbench is an interactive Analysis of Competing Hypotheses (ACH) tool that brings rigorous intelligence methodology to the browser. Score evidence against hypotheses, map findings to MITRE ATT&CK, identify cognitive biases, and export structured assessments. Zero backend, full offline capability, and five distinct visual themes.
 
-![Intel Workbench](docs/screenshots/dashboard.png)
+> **Try it now → [intel-workbench.vercel.app](https://intel-workbench.vercel.app)**
+
+![Intel Workbench dashboard](docs/screenshots/dashboard.png)
 
 ---
 
 ## ✨ Features
 
 - **ACH Matrix** : Interactive evidence-vs-hypothesis grid with consistency ratings (C/I/N/NA), weighted scoring, and automatic preferred-hypothesis identification
+- **MITRE ATT&CK Tagging** : Tag evidence and hypotheses with techniques from the Enterprise ATT&CK matrix (691 techniques, 14 tactics). Searchable by ID, name, or tactic. Vendored locally so the workbench stays offline-first
 - **Cognitive Bias Checklist** : Heuer & Pherson taxonomy with 12 biases across Cognitive, Analytical, and Social categories; track mitigation notes per bias
 - **Score Visualization** : Real-time normalized score bars showing hypothesis support levels with color-coded confidence indicators
 - **Evidence Weighting** : Credibility and relevance ratings (High/Medium/Low) that feed into weighted inconsistency scores
-- **Export & Import** : Full JSON export/import for backup and sharing; Markdown export for report generation
+- **Export & Import** : Full JSON export/import for backup and sharing; Markdown export for report generation (includes ATT&CK technique IDs)
 - **5 Visual Themes** : Langley (classified intel), Terminal (hacker/OSINT), Analyst's Desk (clean professional), Stratcom (military command), Cyber Noir (cyberpunk)
 - **In-App Guided Tour** : First-visit walkthrough powered by driver.js highlighting every major feature
 - **Built-In Documentation** : Comprehensive help page covering ACH methodology, scoring, bias awareness, and keyboard shortcuts
@@ -76,6 +81,16 @@ Open [http://localhost:5173](http://localhost:5173) in your browser.
 npm run build
 npm run preview
 ```
+
+### Run Tests
+
+```bash
+npm test         # vitest, single run
+npm run test:watch
+npm run typecheck
+```
+
+CI runs typecheck + tests + production build on every push (`.github/workflows/ci.yml`).
 
 ---
 
@@ -160,7 +175,34 @@ Each variant wraps the same core pages in a unique visual identity:
 | **v4 : Stratcom** | Military Command | OD green, amber accents, grid patterns, military time |
 | **v5 : Cyber Noir** | Cyberpunk | Neon cyan + magenta, glow effects, glass-morphism |
 
+<p align="center">
+  <img src="docs/screenshots/variant-v1-langley.png" width="49%" alt="Langley variant" />
+  <img src="docs/screenshots/variant-v2-terminal.png" width="49%" alt="Terminal variant" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/variant-v3-analysts-desk.png" width="49%" alt="Analyst's Desk variant" />
+  <img src="docs/screenshots/variant-v4-stratcom.png" width="49%" alt="Stratcom variant" />
+</p>
+<p align="center">
+  <img src="docs/screenshots/variant-v5-cyber-noir.png" width="60%" alt="Cyber Noir variant" />
+</p>
+
 All variants share the same Zustand store and page components. Switching themes is instant : just navigate back to the variant picker at `/`.
+
+---
+
+## 🎯 MITRE ATT&CK Integration
+
+Tag evidence and hypotheses with techniques from the **MITRE ATT&CK Enterprise** matrix. Search by technique ID (`T1059`), name (`Phishing`), or filter by tactic (Initial Access, Execution, Lateral Movement, …). Tags persist in JSON exports and are rendered as clickable references in Markdown reports.
+
+![ATT&CK technique tagger](docs/screenshots/attack-tagger.png)
+
+The full ATT&CK Enterprise dataset (691 techniques, 14 tactics) is vendored at `src/data/attack-enterprise.json` and lazy-loaded so the initial bundle stays small. To refresh after a new ATT&CK release:
+
+```bash
+curl -sL https://raw.githubusercontent.com/mitre/cti/master/enterprise-attack/enterprise-attack.json \
+  | jq -f scripts/slim-attack.jq > src/data/attack-enterprise.json
+```
 
 ---
 
