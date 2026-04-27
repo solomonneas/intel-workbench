@@ -8,7 +8,7 @@ import {
   Grid3X3,
   Info,
 } from 'lucide-react';
-import type { ACHMatrix as ACHMatrixType, ConsistencyRating, Evidence, Hypothesis, ConfidenceLevel } from '../../types';
+import type { ACHMatrix as ACHMatrixType, ConsistencyRating, Evidence, Hypothesis, ConfidenceLevel, ProbabilityBand } from '../../types';
 import { useProjectStore } from '../../store/useProjectStore';
 import {
   calculateAllScores,
@@ -18,6 +18,8 @@ import {
   getRatingLabel,
 } from '../../utils/achScoring';
 import { ACHScoreBar } from './ACHScoreBar';
+import { ProbabilityBandPicker } from './ProbabilityBandPicker';
+import { PreferredBandRibbon } from './PreferredBandRibbon';
 import { TechniqueSelector } from '../attack/TechniqueSelector';
 import { TechniqueChips } from '../attack/TechniqueChips';
 
@@ -144,6 +146,13 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
   const handleUpdateJustification = useCallback(
     (hypothesisId: string, justification: string) => {
       store.updateHypothesis(projectId, matrix.id, hypothesisId, { confidenceJustification: justification });
+    },
+    [projectId, matrix.id, store]
+  );
+
+  const handleSetProbabilityBand = useCallback(
+    (hypothesisId: string, band: ProbabilityBand | undefined) => {
+      store.updateHypothesis(projectId, matrix.id, hypothesisId, { probabilityBand: band });
     },
     [projectId, matrix.id, store]
   );
@@ -283,6 +292,9 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
                     {...(hIdx === 0 ? { 'data-tour': 'hypothesis-columns' } : {})}
                   >
                     <div className="flex flex-col items-center gap-2">
+                      {h.id === preferredId && h.probabilityBand && (
+                        <PreferredBandRibbon band={h.probabilityBand} />
+                      )}
                       <div className="flex items-center gap-1">
                         {h.id === preferredId && (
                           <Trophy size={12} className="text-intel-green" />
@@ -392,6 +404,13 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
                           />
                         )}
                       </div>
+
+                      {/* ICD 203 estimative likelihood picker */}
+                      <ProbabilityBandPicker
+                        value={h.probabilityBand}
+                        onChange={(band) => handleSetProbabilityBand(h.id, band)}
+                        contextLabel={h.name}
+                      />
 
                       <span className="text-xxs font-mono" style={{color: "var(--iw-text-muted)"}}>
                         Score: {scores[h.id] ?? 0}

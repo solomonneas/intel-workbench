@@ -6,6 +6,10 @@ const hypotheses: Hypothesis[] = [
     name: 'Russian GRU Unit 74455',
     description:
       'Attribution to Sandworm Team, a cyber unit within the Russian GRU (Main Intelligence Directorate), specifically Unit 74455 based in Moscow.',
+    confidence: 'High',
+    confidenceJustification:
+      'Multiple independent high-credibility sources (DOJ indictment, ESET, Microsoft, Cisco Talos) corroborate.',
+    probabilityBand: 'almost-certainly',
     attackTechniques: ['T1485', 'T1486', 'T1490', 'T1565'],
   },
   {
@@ -13,6 +17,8 @@ const hypotheses: Hypothesis[] = [
     name: 'Chinese APT41 false flag',
     description:
       'Operations conducted by Chinese state-sponsored APT41 (Double Dragon) with deliberate false flags to implicate Russia.',
+    confidence: 'Low',
+    probabilityBand: 'very-unlikely',
     attackTechniques: ['T1027', 'T1059', 'T1190'],
   },
   {
@@ -20,6 +26,8 @@ const hypotheses: Hypothesis[] = [
     name: 'Criminal group (not state)',
     description:
       'Activity conducted by a sophisticated financially-motivated criminal group without direct state sponsorship.',
+    confidence: 'Low',
+    probabilityBand: 'almost-no-chance',
     attackTechniques: ['T1486'],
   },
   {
@@ -27,6 +35,8 @@ const hypotheses: Hypothesis[] = [
     name: 'Unknown state actor',
     description:
       'Operations by an unidentified state-level actor with unknown motivations, possibly a third party benefiting from chaos.',
+    confidence: 'Low',
+    probabilityBand: 'unlikely',
   },
 ];
 

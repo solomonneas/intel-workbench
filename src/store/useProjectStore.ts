@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Project, ACHMatrix, Evidence, Hypothesis, ConsistencyRating, BiasChecklist } from '../types';
 import { generateId } from '../utils/id';
+import { isProbabilityBand } from '../utils/icd203';
 import { sampleProject } from '../data/sampleProject';
 
 export interface ImportResult {
@@ -32,7 +33,7 @@ interface ProjectStore {
 
   // Hypothesis CRUD
   addHypothesis: (projectId: string, matrixId: string, name: string, description: string, attackTechniques?: string[]) => void;
-  updateHypothesis: (projectId: string, matrixId: string, hypothesisId: string, updates: Partial<Pick<Hypothesis, 'name' | 'description' | 'confidence' | 'confidenceJustification' | 'attackTechniques'>>) => void;
+  updateHypothesis: (projectId: string, matrixId: string, hypothesisId: string, updates: Partial<Pick<Hypothesis, 'name' | 'description' | 'confidence' | 'confidenceJustification' | 'probabilityBand' | 'attackTechniques'>>) => void;
   removeHypothesis: (projectId: string, matrixId: string, hypothesisId: string) => void;
 
   // Evidence CRUD
@@ -132,12 +133,14 @@ function normalizeMatrix(raw: unknown, fallbackTime: string): ACHMatrix | null {
   const hypotheses: Hypothesis[] = [];
   for (const rh of rawHyps) {
     if (rh && typeof rh === 'object' && typeof (rh as Record<string, unknown>).id === 'string' && typeof (rh as Record<string, unknown>).name === 'string') {
+      const rawBand = (rh as Record<string, unknown>).probabilityBand;
       hypotheses.push({
         id: (rh as Hypothesis).id,
         name: (rh as Hypothesis).name,
         description: typeof (rh as Hypothesis).description === 'string' ? (rh as Hypothesis).description : '',
         confidence: ['Low', 'Moderate', 'High'].includes((rh as Hypothesis).confidence as string) ? (rh as Hypothesis).confidence : undefined,
         confidenceJustification: typeof (rh as Hypothesis).confidenceJustification === 'string' ? (rh as Hypothesis).confidenceJustification : undefined,
+        probabilityBand: isProbabilityBand(rawBand) ? rawBand : undefined,
         attackTechniques: sanitizeTechniqueIds((rh as Record<string, unknown>).attackTechniques),
       });
     }

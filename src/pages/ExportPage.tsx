@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { useProjectStore } from '../store/useProjectStore';
 import { calculateAllScores, findPreferredHypothesis } from '../utils/achScoring';
+import { formatBandWithRange } from '../utils/icd203';
 import { useBasePath } from '../utils/useBasePath';
 
 export function ExportPage() {
@@ -87,11 +88,16 @@ export function ExportPage() {
       lines.push('');
       for (const h of matrix.hypotheses) {
         const score = scores[h.id] ?? 0;
-        const marker = h.id === preferredId ? ' ⭐ **PREFERRED**' : '';
+        const isPreferred = h.id === preferredId;
+        const marker = isPreferred ? ' ⭐ **PREFERRED**' : '';
         const confidenceStr = h.confidence ? `**Confidence:** ${h.confidence}` : '**Confidence:** Unassessed';
-        const justificationStr = h.confidenceJustification ? ` — ${h.confidenceJustification}` : '';
+        const justificationStr = h.confidenceJustification ? `, ${h.confidenceJustification}` : '';
         lines.push(`- **${escapeCell(h.name)}:** ${score}${marker}`);
         lines.push(`  - ${confidenceStr}${justificationStr}`);
+        if (h.probabilityBand) {
+          const ribbon = isPreferred ? ' (preferred-hypothesis ribbon)' : '';
+          lines.push(`  - **ICD 203 likelihood:** ${formatBandWithRange(h.probabilityBand)}${ribbon}`);
+        }
         if (h.attackTechniques && h.attackTechniques.length > 0) {
           lines.push(`  - **ATT&CK:** ${h.attackTechniques.join(', ')}`);
         }
