@@ -92,8 +92,24 @@ export function ExportPage() {
         const justificationStr = h.confidenceJustification ? ` — ${h.confidenceJustification}` : '';
         lines.push(`- **${escapeCell(h.name)}:** ${score}${marker}`);
         lines.push(`  - ${confidenceStr}${justificationStr}`);
+        if (h.attackTechniques && h.attackTechniques.length > 0) {
+          lines.push(`  - **ATT&CK:** ${h.attackTechniques.join(', ')}`);
+        }
       }
       lines.push('');
+
+      const evidenceWithTechniques = matrix.evidence.filter(
+        (e) => e.attackTechniques && e.attackTechniques.length > 0,
+      );
+      if (evidenceWithTechniques.length > 0) {
+        lines.push('### Evidence ATT&CK Mapping');
+        lines.push('');
+        for (const e of evidenceWithTechniques) {
+          const desc = escapeCell(e.description).substring(0, 60);
+          lines.push(`- *${desc}* — ${e.attackTechniques!.join(', ')}`);
+        }
+        lines.push('');
+      }
 
       lines.push('*Legend: C = Consistent, I = Inconsistent, N = Neutral, NA = Not Applicable*');
       lines.push('*Scoring: I = +2, N = 0, C = -1 (weighted by credibility × relevance)*');

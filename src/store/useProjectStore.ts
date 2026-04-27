@@ -31,8 +31,8 @@ interface ProjectStore {
   deleteMatrix: (projectId: string, matrixId: string) => void;
 
   // Hypothesis CRUD
-  addHypothesis: (projectId: string, matrixId: string, name: string, description: string) => void;
-  updateHypothesis: (projectId: string, matrixId: string, hypothesisId: string, updates: Partial<Pick<Hypothesis, 'name' | 'description' | 'confidence' | 'confidenceJustification'>>) => void;
+  addHypothesis: (projectId: string, matrixId: string, name: string, description: string, attackTechniques?: string[]) => void;
+  updateHypothesis: (projectId: string, matrixId: string, hypothesisId: string, updates: Partial<Pick<Hypothesis, 'name' | 'description' | 'confidence' | 'confidenceJustification' | 'attackTechniques'>>) => void;
   removeHypothesis: (projectId: string, matrixId: string, hypothesisId: string) => void;
 
   // Evidence CRUD
@@ -51,6 +51,23 @@ interface ProjectStore {
   // Import/Export
   exportProject: (id: string) => string | null;
   importProject: (json: string) => ImportResult;
+}
+
+const TECHNIQUE_ID_RE = /^T\d{4}(\.\d{3})?$/;
+
+function sanitizeTechniqueIds(raw: unknown): string[] | undefined {
+  if (!Array.isArray(raw)) return undefined;
+  const cleaned: string[] = [];
+  const seen = new Set<string>();
+  for (const v of raw) {
+    if (typeof v !== 'string') continue;
+    const id = v.trim().toUpperCase();
+    if (!TECHNIQUE_ID_RE.test(id)) continue;
+    if (seen.has(id)) continue;
+    seen.add(id);
+    cleaned.push(id);
+  }
+  return cleaned.length > 0 ? cleaned : undefined;
 }
 
 /**
@@ -121,6 +138,7 @@ function normalizeMatrix(raw: unknown, fallbackTime: string): ACHMatrix | null {
         description: typeof (rh as Hypothesis).description === 'string' ? (rh as Hypothesis).description : '',
         confidence: ['Low', 'Moderate', 'High'].includes((rh as Hypothesis).confidence as string) ? (rh as Hypothesis).confidence : undefined,
         confidenceJustification: typeof (rh as Hypothesis).confidenceJustification === 'string' ? (rh as Hypothesis).confidenceJustification : undefined,
+        attackTechniques: sanitizeTechniqueIds((rh as Record<string, unknown>).attackTechniques),
       });
     }
   }
@@ -138,6 +156,7 @@ function normalizeMatrix(raw: unknown, fallbackTime: string): ACHMatrix | null {
         source: typeof e.source === 'string' ? e.source : '',
         credibility: validCredRel.has(e.credibility as string) ? (e.credibility as Evidence['credibility']) : 'Medium',
         relevance: validCredRel.has(e.relevance as string) ? (e.relevance as Evidence['relevance']) : 'Medium',
+        attackTechniques: sanitizeTechniqueIds(e.attackTechniques),
       });
     }
   }
@@ -337,8 +356,13 @@ export const useProjectStore = create<ProjectStore>()(
         }));
       },
 
-      addHypothesis: (projectId, matrixId, name, description) => {
-        const hypothesis: Hypothesis = { id: generateId(), name, description };
+      addHypothesis: (projectId, matrixId, name, description, attackTechniques) => {
+        const hypothesis: Hypothesis = {
+          id: generateId(),
+          name,
+          description,
+          ...(attackTechniques && attackTechniques.length > 0 ? { attackTechniques } : {}),
+        };
         set((state) => ({
           projects: state.projects.map((p) =>
             p.id === projectId

@@ -18,6 +18,8 @@ import {
   getRatingLabel,
 } from '../../utils/achScoring';
 import { ACHScoreBar } from './ACHScoreBar';
+import { TechniqueSelector } from '../attack/TechniqueSelector';
+import { TechniqueChips } from '../attack/TechniqueChips';
 
 interface ACHMatrixProps {
   projectId: string;
@@ -97,11 +99,13 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
     source: '',
     credibility: 'Medium',
     relevance: 'Medium',
+    attackTechniques: [],
   });
 
   // New hypothesis form
   const [newHypName, setNewHypName] = useState('');
   const [newHypDesc, setNewHypDesc] = useState('');
+  const [newHypTechniques, setNewHypTechniques] = useState<string[]>([]);
 
   const scores = useMemo(
     () => calculateAllScores(matrix),
@@ -146,16 +150,21 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
 
   const handleAddEvidence = () => {
     if (!newEvidence.description.trim()) return;
-    store.addEvidence(projectId, matrix.id, newEvidence);
-    setNewEvidence({ description: '', source: '', credibility: 'Medium', relevance: 'Medium' });
+    const payload = {
+      ...newEvidence,
+      attackTechniques: (newEvidence.attackTechniques?.length ?? 0) > 0 ? newEvidence.attackTechniques : undefined,
+    };
+    store.addEvidence(projectId, matrix.id, payload);
+    setNewEvidence({ description: '', source: '', credibility: 'Medium', relevance: 'Medium', attackTechniques: [] });
     setShowAddEvidence(false);
   };
 
   const handleAddHypothesis = () => {
     if (!newHypName.trim()) return;
-    store.addHypothesis(projectId, matrix.id, newHypName, newHypDesc);
+    store.addHypothesis(projectId, matrix.id, newHypName, newHypDesc, newHypTechniques);
     setNewHypName('');
     setNewHypDesc('');
+    setNewHypTechniques([]);
     setShowAddHypothesis(false);
   };
 
@@ -387,6 +396,18 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
                       <span className="text-xxs font-mono" style={{color: "var(--iw-text-muted)"}}>
                         Score: {scores[h.id] ?? 0}
                       </span>
+                      {h.attackTechniques && h.attackTechniques.length > 0 && (
+                        <div className="w-full flex justify-center">
+                          <TechniqueChips
+                            ids={h.attackTechniques}
+                            onRemove={(id) =>
+                              store.updateHypothesis(projectId, matrix.id, h.id, {
+                                attackTechniques: h.attackTechniques?.filter((t) => t !== id),
+                              })
+                            }
+                          />
+                        </div>
+                      )}
                       <button
                         onClick={() => setConfirmDelete({ type: 'hypothesis', id: h.id })}
                         className="hover:text-red-400 transition-colors p-0.5" style={{ color: "var(--iw-text-muted)" }}
@@ -455,6 +476,18 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
                         </p>
                       )}
                       <p className="text-xxs font-mono mt-1" style={{color: "var(--iw-text-muted)"}}>{e.source}</p>
+                      {e.attackTechniques && e.attackTechniques.length > 0 && (
+                        <div className="mt-1.5">
+                          <TechniqueChips
+                            ids={e.attackTechniques}
+                            onRemove={(id) =>
+                              store.updateEvidence(projectId, matrix.id, e.id, {
+                                attackTechniques: e.attackTechniques?.filter((t) => t !== id),
+                              })
+                            }
+                          />
+                        </div>
+                      )}
                     </div>
                     <button
                       onClick={() => setConfirmDelete({ type: 'evidence', id: e.id })}
@@ -566,7 +599,7 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
 
       {/* Add Hypothesis Modal */}
       {showAddHypothesis && (
-        <Modal title="Add Hypothesis" onClose={() => setShowAddHypothesis(false)}>
+        <Modal title="Add Hypothesis" onClose={() => setShowAddHypothesis(false)} wide>
           <div className="space-y-3">
             <div>
               <label className="block text-xs font-medium mb-1" style={{color: "var(--iw-text-muted)"}}>Name</label>
@@ -593,6 +626,11 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
                 onChange={(e) => setNewHypDesc(e.target.value)}
               />
             </div>
+            <TechniqueSelector
+              value={newHypTechniques}
+              onChange={setNewHypTechniques}
+              helper="Tag techniques the threat actor in this hypothesis is expected to use."
+            />
             <div className="flex gap-2 justify-end">
               <button onClick={() => setShowAddHypothesis(false)} className="btn-ghost">
                 Cancel
@@ -607,7 +645,7 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
 
       {/* Add Evidence Modal */}
       {showAddEvidence && (
-        <Modal title="Add Evidence" onClose={() => setShowAddEvidence(false)}>
+        <Modal title="Add Evidence" onClose={() => setShowAddEvidence(false)} wide>
           <div className="space-y-3">
             <div>
               <label className="block text-xs font-medium mb-1" style={{color: "var(--iw-text-muted)"}}>Description</label>
@@ -669,6 +707,13 @@ export function ACHMatrix({ projectId, matrix }: ACHMatrixProps) {
                 </select>
               </div>
             </div>
+            <TechniqueSelector
+              value={newEvidence.attackTechniques ?? []}
+              onChange={(next) =>
+                setNewEvidence((prev) => ({ ...prev, attackTechniques: next }))
+              }
+              helper="Tag the ATT&CK techniques this evidence reflects (T-IDs preserved on export)."
+            />
             <div className="flex gap-2 justify-end">
               <button onClick={() => setShowAddEvidence(false)} className="btn-ghost">
                 Cancel
@@ -719,15 +764,17 @@ function Modal({
   title,
   children,
   onClose,
+  wide,
 }: {
   title: string;
   children: ReactNode;
   onClose: () => void;
+  wide?: boolean;
 }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative card p-6 w-full max-w-md mx-4 shadow-2xl">
+      <div className={`relative card p-6 w-full ${wide ? 'max-w-2xl' : 'max-w-md'} mx-4 shadow-2xl max-h-[90vh] overflow-y-auto`}>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-semibold" style={{color: "var(--iw-text)"}}>{title}</h3>
           <button onClick={onClose} className="hover:text-slate-300 transition-colors" style={{color: "var(--iw-text-muted)"}}>

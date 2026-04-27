@@ -8,6 +8,7 @@ export interface Evidence {
   source: string;
   credibility: 'High' | 'Medium' | 'Low';
   relevance: 'High' | 'Medium' | 'Low';
+  attackTechniques?: string[];
 }
 
 export interface Hypothesis {
@@ -16,6 +17,7 @@ export interface Hypothesis {
   description: string;
   confidence?: ConfidenceLevel;
   confidenceJustification?: string;
+  attackTechniques?: string[];
 }
 
 export interface ACHMatrix {

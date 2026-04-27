@@ -6,18 +6,21 @@ const hypotheses: Hypothesis[] = [
     name: 'Russian GRU Unit 74455',
     description:
       'Attribution to Sandworm Team, a cyber unit within the Russian GRU (Main Intelligence Directorate), specifically Unit 74455 based in Moscow.',
+    attackTechniques: ['T1485', 'T1486', 'T1490', 'T1565'],
   },
   {
     id: 'h2-apt41',
     name: 'Chinese APT41 false flag',
     description:
       'Operations conducted by Chinese state-sponsored APT41 (Double Dragon) with deliberate false flags to implicate Russia.',
+    attackTechniques: ['T1027', 'T1059', 'T1190'],
   },
   {
     id: 'h3-criminal',
     name: 'Criminal group (not state)',
     description:
       'Activity conducted by a sophisticated financially-motivated criminal group without direct state sponsorship.',
+    attackTechniques: ['T1486'],
   },
   {
     id: 'h4-unknown',
@@ -35,6 +38,7 @@ const evidence: Evidence[] = [
     source: 'ESET, Microsoft, US-CERT',
     credibility: 'High',
     relevance: 'High',
+    attackTechniques: ['T1485', 'T1490'],
   },
   {
     id: 'e2-olympic',
@@ -43,6 +47,7 @@ const evidence: Evidence[] = [
     source: 'Kaspersky, Cisco Talos',
     credibility: 'Medium',
     relevance: 'High',
+    attackTechniques: ['T1485', 'T1486'],
   },
   {
     id: 'e3-vpnfilter',
@@ -51,6 +56,7 @@ const evidence: Evidence[] = [
     source: 'Cisco Talos, FBI',
     credibility: 'High',
     relevance: 'High',
+    attackTechniques: ['T1542.005', 'T1090'],
   },
   {
     id: 'e4-indictment',
@@ -67,6 +73,7 @@ const evidence: Evidence[] = [
     source: 'ESET, iSIGHT Partners',
     credibility: 'Medium',
     relevance: 'High',
+    attackTechniques: ['T1059', 'T1565'],
   },
   {
     id: 'e6-geopolitical',
@@ -83,6 +90,7 @@ const evidence: Evidence[] = [
     source: 'Kaspersky GReAT',
     credibility: 'Low',
     relevance: 'Medium',
+    attackTechniques: ['T1036', 'T1027'],
   },
   {
     id: 'e8-commodity',
