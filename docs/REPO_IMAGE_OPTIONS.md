@@ -1,23 +1,21 @@
 # Repo Image Options
 
-Three house-style hero image options for the repository. These keep the current repo-art direction: wide watercolor/ink illustration, dark workshop palette, brass and teal technical detail, paper clutter, and no embedded title text.
+Three lighter watercolor hero image options for the repository. These keep the repo-art direction but pull away from dense cyber graph visuals: lighter paper palette, cleaner CIA-style cyber intelligence artifacts, no mascot, no animals, no people, no official seals, and no embedded title text.
 
-For Intel Workbench, the imagery is CIA-style cyber intelligence rather than OpenClaw. No lobster, mascot, official CIA seal, government logo, real insignia, people, or readable title text is included.
+## 1. Light Cyber Analysis Desk
 
-## 1. Cyber Analysis Desk
+A clean analyst desk with dossiers, redacted reports, source notes, packet traces, and ACH-style evidence cards.
 
-A classified cyber analysis desk with dossiers, redacted source notes, network traces, intelligence maps, and ACH-style evidence cards.
+![Light Cyber Analysis Desk repo image](repo-images/light-cyber-analysis-desk.jpg)
 
-![Cyber Analysis Desk repo image](repo-images/cyber-analysis-desk.jpg)
+## 2. Light Analyst Workbook
 
-## 2. Cyber Infrastructure Board
+An analytic workbook spread with redacted files, matrix sheets, data slips, a map corner, and restrained cyber-intel cues.
 
-A cyber infrastructure relationship board using abstract nodes, route lines, source packets, confidence markers, and Diamond Model-style geometry.
+![Light Analyst Workbook repo image](repo-images/light-analyst-workbook.jpg)
 
-![Cyber Infrastructure Board repo image](repo-images/cyber-infra-board.jpg)
+## 3. Light Classified Cyber Desk
 
-## 3. Correlation Engine
+A calmer classified cyber desk with folders, abstract packet-capture bars, blank matrix cells, and soft watercolor space.
 
-A secure cyber intelligence lab with a mechanical evidence-correlation engine, IOC cards, redaction stamps, and signal-processing dials.
-
-![Correlation Engine repo image](repo-images/correlation-engine.jpg)
+![Light Classified Cyber Desk repo image](repo-images/light-classified-cyber-desk.jpg)
