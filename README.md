@@ -13,7 +13,7 @@
 
 **Structured analytic techniques for cyber threat intelligence. Built for the modern analyst.**
 
-Intel Workbench is an interactive Analysis of Competing Hypotheses (ACH) tool that brings rigorous intelligence methodology to the browser. Score evidence against hypotheses, map findings to MITRE ATT&CK, identify cognitive biases, and export structured assessments. Zero backend, full offline capability, and five distinct visual themes.
+Intel Workbench is an interactive Analysis of Competing Hypotheses (ACH) tool that brings rigorous intelligence methodology to the browser. Score evidence against hypotheses, map findings to MITRE ATT&CK, identify cognitive biases, and export structured assessments. Zero backend, full offline capability, and eight distinct visual themes.
 
 > **Try it now → [intel-workbench.vercel.app](https://intel-workbench.vercel.app)**
 
@@ -30,7 +30,7 @@ Intel Workbench is an interactive Analysis of Competing Hypotheses (ACH) tool th
 - **ICD 203 Estimative Language** : Pick a likelihood band ("almost no chance" through "almost certainly") with the canonical 1-5%/5-20%/.../95-99% ranges per ODNI Analytic Standards; the preferred hypothesis displays a probability ribbon on the matrix and in Markdown exports
 - **Evidence Weighting** : Credibility and relevance ratings (High/Medium/Low) that feed into weighted inconsistency scores
 - **Export & Import** : Full JSON export/import for backup and sharing; Markdown export for report generation (includes ATT&CK technique IDs)
-- **5 Visual Themes** : Langley (classified intel), Terminal (hacker/OSINT), Analyst's Desk (clean professional), Stratcom (military command), Cyber Noir (cyberpunk)
+- **8 Visual Themes** : Langley, Terminal, Analyst's Desk, Stratcom, Cyber Noir, Casefile Atlas, Ops Floor, and Blacksite Minimal
 - **In-App Guided Tour** : First-visit walkthrough powered by driver.js highlighting every major feature
 - **Built-In Documentation** : Comprehensive help page covering ACH methodology, scoring, bias awareness, and keyboard shortcuts
 - **Offline-First** : All data persisted in localStorage; works without any server
@@ -48,11 +48,11 @@ Browser
        ├─ Zustand Store ← persist middleware → localStorage
        ├─ ThemeContext (per-variant color tokens)
        ├─ Pages: Home / ACH / Bias / Export / Docs
-       └─ 5 Variant Layouts (lazy-loaded)
+       └─ 8 Variant Layouts (lazy-loaded)
 ```
 
 - **State Management:** Zustand with `persist` middleware writes to `localStorage` under the key `intel-workbench-projects`
-- **Routing:** React Router v6 with nested variant routes (`/v1/*`, `/v2/*`, …, `/default/*`) and a variant picker at `/`
+- **Routing:** React Router v6 with nested variant routes (`/v1/*`, `/v2/*`, …, `/v8/*`, `/default/*`) and a variant picker at `/`
 - **Theming:** `ThemeContext` provides color tokens per variant; components read them via `useTheme()`
 - **Code Splitting:** Variant layouts are `React.lazy()` loaded to keep the initial bundle small
 
@@ -159,12 +159,15 @@ intel-workbench/
         ├── v2/Layout.tsx      # Terminal (hacker)
         ├── v3/Layout.tsx      # Analyst's Desk (clean)
         ├── v4/Layout.tsx      # Stratcom (military)
-        └── v5/Layout.tsx      # Cyber Noir (cyberpunk)
+        ├── v5/Layout.tsx      # Cyber Noir (cyberpunk)
+        ├── v6/Layout.tsx      # Casefile Atlas (evidence desk)
+        ├── v7/Layout.tsx      # Ops Floor (live cell)
+        └── v8/Layout.tsx      # Blacksite Minimal (brutalist)
 ```
 
 ---
 
-## 🎨 5 Variants
+## 🎨 8 Variants
 
 Each variant wraps the same core pages in a unique visual identity:
 
@@ -175,6 +178,9 @@ Each variant wraps the same core pages in a unique visual identity:
 | **v3 : Analyst's Desk** | Clean Professional | Light backgrounds, blue accents, content-first layout |
 | **v4 : Stratcom** | Military Command | OD green, amber accents, grid patterns, military time |
 | **v5 : Cyber Noir** | Cyberpunk | Neon cyan + magenta, glow effects, glass-morphism |
+| **v6 : Casefile Atlas** | Evidence Desk | Warm paper, red-thread evidence board, serif-heavy dossiers |
+| **v7 : Ops Floor** | Live Cell | Dense command-center layout, teal signal lines, amber status blocks |
+| **v8 : Blacksite Minimal** | Brutalist | Severe monochrome, acid-lime emphasis, hard-edged controls |
 
 <p align="center">
   <img src="docs/screenshots/variant-v1-langley.png" width="49%" alt="Langley variant" />

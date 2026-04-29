@@ -9,7 +9,7 @@ import { DiamondPage } from './pages/DiamondPage';
 import { ExportPage } from './pages/ExportPage';
 import { DocsPage } from './pages/DocsPage';
 
-export type RouteLabelVariant = 'default' | 'v1' | 'v2' | 'v3' | 'v4' | 'v5';
+export type RouteLabelVariant = 'default' | 'v1' | 'v2' | 'v3' | 'v4' | 'v5' | 'v6' | 'v7' | 'v8';
 
 export interface AppRouteDefinition {
   id: string;
@@ -37,6 +37,9 @@ export const APP_ROUTES: AppRouteDefinition[] = [
         v3: 'Projects',
         v4: 'BASE OPS',
         v5: 'NEXUS',
+        v6: 'Dossiers',
+        v7: 'Ops Queue',
+        v8: 'Worklist',
       },
     },
   },
@@ -53,6 +56,9 @@ export const APP_ROUTES: AppRouteDefinition[] = [
         v3: 'ACH Matrix',
         v4: 'ACH MATRIX',
         v5: 'ACH//GRID',
+        v6: 'Hypothesis Board',
+        v7: 'ACH Board',
+        v8: 'Hypotheses',
       },
     },
   },
@@ -74,6 +80,9 @@ export const APP_ROUTES: AppRouteDefinition[] = [
         v3: 'Bias Checklist',
         v4: 'BIAS CHECK',
         v5: 'BIAS//SCAN',
+        v6: 'Bias Review',
+        v7: 'Bias Control',
+        v8: 'Biases',
       },
       tourId: 'bias-nav',
     },
@@ -91,6 +100,9 @@ export const APP_ROUTES: AppRouteDefinition[] = [
         v3: 'IOC Extractor',
         v4: 'IOC EXTRACT',
         v5: 'IOC//TRACE',
+        v6: 'IOC Ledger',
+        v7: 'IOC Intake',
+        v8: 'IOCs',
       },
     },
   },
@@ -107,6 +119,9 @@ export const APP_ROUTES: AppRouteDefinition[] = [
         v3: 'Diamond Model',
         v4: 'DIAMOND MODEL',
         v5: 'DIAMOND//MAP',
+        v6: 'Diamond Notes',
+        v7: 'Diamond Map',
+        v8: 'Diamond',
       },
     },
   },
@@ -123,6 +138,9 @@ export const APP_ROUTES: AppRouteDefinition[] = [
         v3: 'Export',
         v4: 'EXFIL DATA',
         v5: 'EXTRACT',
+        v6: 'Export Packet',
+        v7: 'Package Out',
+        v8: 'Output',
       },
       tourId: 'export-nav',
     },
@@ -140,6 +158,9 @@ export const APP_ROUTES: AppRouteDefinition[] = [
         v3: 'Docs',
         v4: 'FIELD MANUAL',
         v5: 'CODEX',
+        v6: 'Field Notes',
+        v7: 'Playbook',
+        v8: 'Manual',
       },
       tourId: 'docs-nav',
     },
