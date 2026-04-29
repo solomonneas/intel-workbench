@@ -1,21 +1,23 @@
 # Repo Image Options
 
-Three lighter watercolor hero image options for the repository. These keep the repo-art direction but pull away from dense cyber graph visuals: lighter paper palette, cleaner CIA-style cyber intelligence artifacts, no mascot, no animals, no people, no official seals, and no embedded title text.
+Three lighter watercolor hero image options for the repository. These move the direction toward CIA/Langley-style cyber intelligence: executive briefing packets, redacted source material, analytic confidence artifacts, ACH-style evidence cards, and cyber indicators presented as report evidence rather than dashboard graphics.
 
-## 1. Light Cyber Analysis Desk
+No mascot, animals, people, official CIA seal, presidential seal, government logo, real insignia, or embedded title text is included.
 
-A clean analyst desk with dossiers, redacted reports, source notes, packet traces, and ACH-style evidence cards.
+## 1. Presidential Briefing Packet
 
-![Light Cyber Analysis Desk repo image](repo-images/light-cyber-analysis-desk.jpg)
+An executive cyber threat assessment packet with redacted source pages, briefing cards, maps, and analytic evidence slips.
 
-## 2. Light Analyst Workbook
+![Presidential Briefing Packet repo image](repo-images/presidential-briefing-packet.jpg)
 
-An analytic workbook spread with redacted files, matrix sheets, data slips, a map corner, and restrained cyber-intel cues.
+## 2. National Cyber Threat Brief
 
-![Light Analyst Workbook repo image](repo-images/light-analyst-workbook.jpg)
+A cleaner classified intelligence desk with source reliability cards, blank ACH matrix cells, IOC slips, and threat assessment folders.
 
-## 3. Light Classified Cyber Desk
+![National Cyber Threat Brief repo image](repo-images/national-cyber-threat-brief.jpg)
 
-A calmer classified cyber desk with folders, abstract packet-capture bars, blank matrix cells, and soft watercolor space.
+## 3. Executive Threat Estimate
 
-![Light Classified Cyber Desk repo image](repo-images/light-classified-cyber-desk.jpg)
+A light watercolor threat estimate layout with redacted documents, analytic judgment cards, matrix sheets, and restrained cyber evidence.
+
+![Executive Threat Estimate repo image](repo-images/executive-threat-estimate.jpg)
