@@ -1,21 +1,23 @@
 # Repo Image Options
 
-Three house-style hero image options for the repository. These match the current Content Guard, solostack, Hotwash, and n8n Ops MCP banner direction: wide watercolor/ink illustration, dark workshop palette, warm brass light, technical clutter, tiny crustacean helper, and no embedded title text.
+Three house-style hero image options for the repository. These keep the current repo-art direction: wide watercolor/ink illustration, dark workshop palette, brass and teal technical detail, paper clutter, and no embedded title text.
 
-## 1. Evidence Engine
+For Intel Workbench, the imagery is CIA-style cyber intelligence rather than OpenClaw. No lobster, mascot, official CIA seal, government logo, real insignia, people, or readable title text is included.
 
-A brass evidence machine ingests dossiers, maps, source notes, and index cards, then outputs organized hypothesis cards.
+## 1. Cyber Analysis Desk
 
-![Evidence Engine repo image](repo-images/evidence-engine.jpg)
+A classified cyber analysis desk with dossiers, redacted source notes, network traces, intelligence maps, and ACH-style evidence cards.
 
-## 2. Hypothesis Matrix
+![Cyber Analysis Desk repo image](repo-images/cyber-analysis-desk.jpg)
 
-A steampunk planning wall turns ACH into a physical analyst board with gauges, confidence markers, pins, and evidence rows.
+## 2. Cyber Infrastructure Board
 
-![Hypothesis Matrix repo image](repo-images/hypothesis-matrix.jpg)
+A cyber infrastructure relationship board using abstract nodes, route lines, source packets, confidence markers, and Diamond Model-style geometry.
 
-## 3. Intel Cartography
+![Cyber Infrastructure Board repo image](repo-images/cyber-infra-board.jpg)
 
-A parchment relationship-map table connects threat actors, infrastructure, IOCs, and Diamond Model-style entities.
+## 3. Correlation Engine
 
-![Intel Cartography repo image](repo-images/intel-cartography.jpg)
+A secure cyber intelligence lab with a mechanical evidence-correlation engine, IOC cards, redaction stamps, and signal-processing dials.
+
+![Correlation Engine repo image](repo-images/correlation-engine.jpg)
