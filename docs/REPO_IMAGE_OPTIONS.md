@@ -1,21 +1,21 @@
 # Repo Image Options
 
-Three hero image options for the repository. None of these include readable text, logos, people, or watermarks.
+Three house-style hero image options for the repository. These match the current Content Guard, solostack, Hotwash, and n8n Ops MCP banner direction: wide watercolor/ink illustration, dark workshop palette, warm brass light, technical clutter, tiny crustacean helper, and no embedded title text.
 
-## 1. Casefile Atlas
+## 1. Evidence Engine
 
-Warm evidence-desk image with files, source documents, pins, red thread, and analyst desk atmosphere.
+A brass evidence machine ingests dossiers, maps, source notes, and index cards, then outputs organized hypothesis cards.
 
-![Casefile Atlas repo image](repo-images/casefile-atlas.jpg)
+![Evidence Engine repo image](repo-images/evidence-engine.jpg)
 
-## 2. Ops Floor
+## 2. Hypothesis Matrix
 
-Dark security-operations image with network graphs, threat-intel panels, and teal/amber monitor light.
+A steampunk planning wall turns ACH into a physical analyst board with gauges, confidence markers, pins, and evidence rows.
 
-![Ops Floor repo image](repo-images/ops-floor.jpg)
+![Hypothesis Matrix repo image](repo-images/hypothesis-matrix.jpg)
 
-## 3. Blacksite Minimal
+## 3. Intel Cartography
 
-Stark black product-shot image with acid-lime evidence highlights, abstract matrix blocks, and forensic objects.
+A parchment relationship-map table connects threat actors, infrastructure, IOCs, and Diamond Model-style entities.
 
-![Blacksite Minimal repo image](repo-images/blacksite-minimal.jpg)
+![Intel Cartography repo image](repo-images/intel-cartography.jpg)
