@@ -1,23 +1,28 @@
 <p align="center">
-  <a href="https://intel-workbench.vercel.app"><img src="https://img.shields.io/badge/Live_Demo-intel--workbench.vercel.app-22c55e?style=flat-square&logo=vercel&logoColor=white" alt="Live Demo" /></a>
-  <img src="https://github.com/solomonneas/intel-workbench/actions/workflows/ci.yml/badge.svg" alt="CI" />
-  <img src="https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=white" alt="React" />
-  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?style=flat-square&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
-  <img src="https://img.shields.io/badge/Zustand-4-FFD43B?style=flat-square" alt="Zustand" />
-  <img src="https://img.shields.io/badge/Vite-7-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite" />
-  <img src="https://img.shields.io/badge/License-MIT-green?style=flat-square" alt="MIT License" />
+  <img src="docs/repo-images/executive-threat-estimate.jpg" alt="Intel Workbench executive threat estimate banner">
 </p>
 
-# 🛡️ Solomon's Intel Workbench
+<h1 align="center">Intel Workbench</h1>
 
-**Structured analytic techniques for cyber threat intelligence. Built for the modern analyst.**
+<p align="center">
+  <strong>Structured analytic techniques for cyber threat intelligence.</strong>
+</p>
 
-Intel Workbench is an interactive Analysis of Competing Hypotheses (ACH) tool that brings rigorous intelligence methodology to the browser. Score evidence against hypotheses, map findings to MITRE ATT&CK, identify cognitive biases, and export structured assessments. Zero backend, full offline capability, and five distinct visual themes.
+<p align="center">
+  <a href="https://intel-workbench.vercel.app"><img src="https://img.shields.io/badge/live_demo-intel--workbench.vercel.app-22c55e?style=for-the-badge&logo=vercel&logoColor=white" alt="Live demo"></a>
+  <img src="https://img.shields.io/github/actions/workflow/status/solomonneas/intel-workbench/ci.yml?branch=main&style=for-the-badge&label=CI&logo=githubactions&logoColor=white" alt="CI status">
+  <img src="https://img.shields.io/badge/react-18-61DAFB?style=for-the-badge&logo=react&logoColor=0b1020" alt="React 18">
+  <img src="https://img.shields.io/badge/typescript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript 5">
+  <img src="https://img.shields.io/badge/vite-7-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite 7">
+  <img src="https://img.shields.io/badge/tailwind_css-3-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS 3">
+  <img src="https://img.shields.io/badge/zustand-4-facc15?style=for-the-badge" alt="Zustand 4">
+  <img src="https://img.shields.io/badge/vitest-2-6E9F18?style=for-the-badge&logo=vitest&logoColor=white" alt="Vitest 2">
+  <img src="https://img.shields.io/badge/MITRE_ATT%26CK-local_dataset-7c3aed?style=for-the-badge" alt="MITRE ATT&CK local dataset">
+  <img src="https://img.shields.io/badge/ICD_203-estimative_language-0f766e?style=for-the-badge" alt="ICD 203 estimative language">
+  <img src="https://img.shields.io/badge/license-MIT-green?style=for-the-badge" alt="MIT License">
+</p>
 
-> **Try it now → [intel-workbench.vercel.app](https://intel-workbench.vercel.app)**
-
-![Intel Workbench dashboard](docs/screenshots/dashboard.png)
+Intel Workbench is an interactive Analysis of Competing Hypotheses (ACH) tool that brings rigorous intelligence methodology to the browser. Score evidence against hypotheses, map findings to MITRE ATT&CK, identify cognitive biases, and export structured assessments. Zero backend, full offline capability, and eight distinct visual themes.
 
 ---
 
@@ -30,7 +35,7 @@ Intel Workbench is an interactive Analysis of Competing Hypotheses (ACH) tool th
 - **ICD 203 Estimative Language** : Pick a likelihood band ("almost no chance" through "almost certainly") with the canonical 1-5%/5-20%/.../95-99% ranges per ODNI Analytic Standards; the preferred hypothesis displays a probability ribbon on the matrix and in Markdown exports
 - **Evidence Weighting** : Credibility and relevance ratings (High/Medium/Low) that feed into weighted inconsistency scores
 - **Export & Import** : Full JSON export/import for backup and sharing; Markdown export for report generation (includes ATT&CK technique IDs)
-- **5 Visual Themes** : Langley (classified intel), Terminal (hacker/OSINT), Analyst's Desk (clean professional), Stratcom (military command), Cyber Noir (cyberpunk)
+- **8 Visual Themes** : Langley, Terminal, Analyst's Desk, Stratcom, Cyber Noir, Casefile Atlas, Ops Floor, and Blacksite Minimal
 - **In-App Guided Tour** : First-visit walkthrough powered by driver.js highlighting every major feature
 - **Built-In Documentation** : Comprehensive help page covering ACH methodology, scoring, bias awareness, and keyboard shortcuts
 - **Offline-First** : All data persisted in localStorage; works without any server
@@ -48,11 +53,11 @@ Browser
        ├─ Zustand Store ← persist middleware → localStorage
        ├─ ThemeContext (per-variant color tokens)
        ├─ Pages: Home / ACH / Bias / Export / Docs
-       └─ 5 Variant Layouts (lazy-loaded)
+       └─ 8 Variant Layouts (lazy-loaded)
 ```
 
 - **State Management:** Zustand with `persist` middleware writes to `localStorage` under the key `intel-workbench-projects`
-- **Routing:** React Router v6 with nested variant routes (`/v1/*`, `/v2/*`, …, `/default/*`) and a variant picker at `/`
+- **Routing:** React Router v6 with nested variant routes (`/v1/*`, `/v2/*`, …, `/v8/*`, `/default/*`) and a variant picker at `/`
 - **Theming:** `ThemeContext` provides color tokens per variant; components read them via `useTheme()`
 - **Code Splitting:** Variant layouts are `React.lazy()` loaded to keep the initial bundle small
 
@@ -159,12 +164,15 @@ intel-workbench/
         ├── v2/Layout.tsx      # Terminal (hacker)
         ├── v3/Layout.tsx      # Analyst's Desk (clean)
         ├── v4/Layout.tsx      # Stratcom (military)
-        └── v5/Layout.tsx      # Cyber Noir (cyberpunk)
+        ├── v5/Layout.tsx      # Cyber Noir (cyberpunk)
+        ├── v6/Layout.tsx      # Casefile Atlas (evidence desk)
+        ├── v7/Layout.tsx      # Ops Floor (live cell)
+        └── v8/Layout.tsx      # Blacksite Minimal (brutalist)
 ```
 
 ---
 
-## 🎨 5 Variants
+## 🎨 8 Variants
 
 Each variant wraps the same core pages in a unique visual identity:
 
@@ -175,6 +183,9 @@ Each variant wraps the same core pages in a unique visual identity:
 | **v3 : Analyst's Desk** | Clean Professional | Light backgrounds, blue accents, content-first layout |
 | **v4 : Stratcom** | Military Command | OD green, amber accents, grid patterns, military time |
 | **v5 : Cyber Noir** | Cyberpunk | Neon cyan + magenta, glow effects, glass-morphism |
+| **v6 : Casefile Atlas** | Evidence Desk | Warm paper, red-thread evidence board, serif-heavy dossiers |
+| **v7 : Ops Floor** | Live Cell | Dense command-center layout, teal signal lines, amber status blocks |
+| **v8 : Blacksite Minimal** | Brutalist | Severe monochrome, acid-lime emphasis, hard-edged controls |
 
 <p align="center">
   <img src="docs/screenshots/variant-v1-langley.png" width="49%" alt="Langley variant" />

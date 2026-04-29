@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Shield, Terminal, Layout, Crosshair, Zap } from 'lucide-react';
+import { Shield, Terminal, Layout, Crosshair, Zap, BookOpen, Radio, Diamond } from 'lucide-react';
 
 interface VariantCard {
   id: string;
@@ -62,6 +62,36 @@ const VARIANTS: VariantCard[] = [
     colors: { bg: '#0d0d0d', accent: '#06b6d4', accentSecondary: '#d946ef' },
     icon: Zap,
   },
+  {
+    id: 'v6',
+    path: '/v6',
+    name: 'Casefile Atlas',
+    subtitle: 'Evidence Desk',
+    description:
+      'Warm paper, red-thread evidence board energy, and serif-heavy dossier styling for source review and analytic rigor.',
+    colors: { bg: '#f2eadb', accent: '#9f2d20', accentSecondary: '#24406f' },
+    icon: BookOpen,
+  },
+  {
+    id: 'v7',
+    path: '/v7',
+    name: 'Ops Floor',
+    subtitle: 'Live Cell',
+    description:
+      'Dense command-center layout with teal signal lines, amber status blocks, and a faster operational rhythm.',
+    colors: { bg: '#071013', accent: '#2ee9b6', accentSecondary: '#f8b84e' },
+    icon: Radio,
+  },
+  {
+    id: 'v8',
+    path: '/v8',
+    name: 'Blacksite Minimal',
+    subtitle: 'Brutalist',
+    description:
+      'Severe monochrome interface with acid-lime emphasis, hard edges, and no decorative softness.',
+    colors: { bg: '#050505', accent: '#d7ff2f', accentSecondary: '#f3f0e8' },
+    icon: Diamond,
+  },
 ];
 
 export function VariantPicker() {
@@ -81,8 +111,8 @@ export function VariantPicker() {
           </h1>
         </div>
         <p className="text-sm max-w-lg mx-auto" style={{color: "var(--iw-text-muted)"}}>
-          Choose a visual theme to begin. Each variant provides the same analytical tools
-          — ACH Matrix, Bias Checklist, and Export — wrapped in a distinct aesthetic.
+          Choose a visual theme to begin. Each variant provides the same analytical tools:
+          ACH Matrix, Bias Checklist, IOC extraction, Diamond Model, and Export in a distinct aesthetic.
         </p>
       </div>
 

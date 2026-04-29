@@ -9,6 +9,9 @@ const V2Layout = lazy(() => import('./variants/v2/Layout'));
 const V3Layout = lazy(() => import('./variants/v3/Layout'));
 const V4Layout = lazy(() => import('./variants/v4/Layout'));
 const V5Layout = lazy(() => import('./variants/v5/Layout'));
+const V6Layout = lazy(() => import('./variants/v6/Layout'));
+const V7Layout = lazy(() => import('./variants/v7/Layout'));
+const V8Layout = lazy(() => import('./variants/v8/Layout'));
 
 function LoadingFallback() {
   return (
@@ -73,6 +76,9 @@ function App() {
         <Route path="/v3/*" element={<V3Layout />} />
         <Route path="/v4/*" element={<V4Layout />} />
         <Route path="/v5/*" element={<V5Layout />} />
+        <Route path="/v6/*" element={<V6Layout />} />
+        <Route path="/v7/*" element={<V7Layout />} />
+        <Route path="/v8/*" element={<V8Layout />} />
         <Route path="/*" element={<DefaultLayout />} />
       </Routes>
     </Suspense>
